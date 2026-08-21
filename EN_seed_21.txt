@@ -1,0 +1,79 @@
+implement|triển khai thực hiện|in- + plere (làm đầy) · implement a new system|🔧 Động từ kinh doanh|We implemented the new tracking system in three weeks.|Chúng tôi triển khai hệ thống theo dõi mới trong ba tuần.
+facilitate|tạo điều kiện thuận lợi|facilis (dễ dàng) + -ate · facilitate the process|🔧 Động từ kinh doanh|A local agent facilitates the whole customs process.|Đại lý bản địa tạo thuận lợi cho toàn bộ quy trình hải quan.
+streamline the process|tinh gọn quy trình|streamline + process · streamline the approval process|🔧 Động từ kinh doanh|We streamlined the approval process from five steps to two.|Chúng tôi tinh gọn quy trình phê duyệt từ năm bước xuống hai.
+optimise|tối ưu hoá|optimus (tốt nhất) + -ise · optimise the route|🔧 Động từ kinh doanh|We optimised the route and saved four days.|Chúng tôi tối ưu tuyến đường và tiết kiệm bốn ngày.
+consolidate|hợp nhất, gom lại|con- + solidus (chắc) + -ate · consolidate three orders|🔧 Động từ kinh doanh|We consolidated three orders into one container.|Chúng tôi gom ba đơn hàng vào một container.
+leverage resources|tận dụng đòn bẩy|lever + -age · leverage existing relationships|🔧 Động từ kinh doanh|Leverage what you already have before buying anything new.|Hãy tận dụng những gì bạn đã có trước khi mua thứ gì mới.
+allocate resources|phân bổ nguồn lực|allocate + resources · allocate resources carefully|🔧 Động từ kinh doanh|I allocate resources to the two markets that actually pay.|Tôi phân bổ nguồn lực cho hai thị trường thực sự sinh lời.
+mitigate risk|giảm thiểu rủi ro|mitigate + risk · mitigate the currency risk|🔧 Động từ kinh doanh|We mitigate currency risk by invoicing in dollars.|Chúng tôi giảm rủi ro tỷ giá bằng cách xuất hoá đơn bằng đô la.
+anticipate|dự liệu trước|ante- (trước) + capere (nắm) · anticipate the problem|🔧 Động từ kinh doanh|Good suppliers anticipate problems instead of reporting them.|Nhà cung cấp tốt dự liệu vấn đề thay vì báo cáo chúng.
+accommodate|đáp ứng, chiều theo|ad- + commodus (thuận tiện) · accommodate a special request|🔧 Động từ kinh doanh|We can accommodate a special packing request for a small fee.|Chúng tôi có thể đáp ứng yêu cầu đóng gói đặc biệt với phí nhỏ.
+undertake|đảm nhận thực hiện|under + take · undertake to deliver by May|🔧 Động từ kinh doanh|We undertake to deliver before the end of May.|Chúng tôi cam kết giao hàng trước cuối tháng Năm.
+endeavour|nỗ lực cố gắng|en- + devoir (bổn phận) · endeavour to meet the date|🔧 Động từ kinh doanh|We will endeavour to meet the original date.|Chúng tôi sẽ cố gắng đáp ứng ngày ban đầu.
+ascertain|xác định chắc chắn|ad- + certus (chắc) · ascertain the cause|🔧 Động từ kinh doanh|We are trying to ascertain the cause of the delay.|Chúng tôi đang cố xác định nguyên nhân của sự chậm trễ.
+verify the details|xác minh chi tiết|verify + details · verify the bank details|🔧 Động từ kinh doanh|Please verify the details before the transfer goes out.|Vui lòng xác minh chi tiết trước khi lệnh chuyển được gửi đi.
+reconcile differences|dung hoà khác biệt|reconcile + differences · reconcile the two figures|🔧 Động từ kinh doanh|We reconciled the two figures and found a rounding error.|Chúng tôi đối chiếu hai con số và tìm ra lỗi làm tròn.
+substantiate a claim|chứng minh khiếu nại|substantiate + claim · substantiate the claim with photos|🔧 Động từ kinh doanh|Substantiate the claim with photos and the survey report.|Hãy chứng minh khiếu nại bằng ảnh và biên bản giám định.
+expedite the process|đẩy nhanh quy trình|expedite + process · expedite customs clearance|🔧 Động từ kinh doanh|We paid a small fee to expedite customs clearance.|Chúng tôi trả một khoản nhỏ để đẩy nhanh thông quan.
+delegate authority|uỷ quyền|delegate + authority · delegate authority to sign|🔧 Động từ kinh doanh|I delegated authority to sign invoices under 500 dollars.|Tôi uỷ quyền ký hoá đơn dưới 500 đô.
+oversee|giám sát chung|over + see · oversee the loading|🔧 Động từ kinh doanh|Our agent oversees the loading at the factory.|Đại lý của chúng tôi giám sát việc xếp hàng tại nhà máy.
+liaise with|phối hợp liên lạc với|liaison ← lier (buộc) · liaise with the forwarder|🔧 Động từ kinh doanh|I liaise with the forwarder directly to save time.|Tôi liên lạc trực tiếp với công ty giao nhận để tiết kiệm thời gian.
+coordinate with|phối hợp cùng|coordinate + with · coordinate with the factory|🔧 Động từ kinh doanh|Please coordinate with the factory on the loading date.|Vui lòng phối hợp với nhà máy về ngày xếp hàng.
+follow up on|theo dõi tiến độ về|follow + up + on · follow up on the sample|🔧 Động từ kinh doanh|I will follow up on the sample tomorrow morning.|Tôi sẽ theo dõi về hàng mẫu sáng mai.
+report back|báo cáo lại|report + back · report back by Friday|🔧 Động từ kinh doanh|I will report back once the laboratory replies.|Tôi sẽ báo cáo lại khi phòng thí nghiệm trả lời.
+escalate to|chuyển lên cấp|escalate + to · escalate to the manager|🔧 Động từ kinh doanh|If nothing changes today, I will escalate to their manager.|Nếu hôm nay không có gì thay đổi, tôi sẽ chuyển lên quản lý của họ.
+push for|thúc đẩy đòi hỏi|push + for · push for a better rate|🔧 Động từ kinh doanh|I pushed for a better rate and got 6% off.|Tôi thúc đẩy để có mức tốt hơn và được giảm 6%.
+hold off|tạm hoãn lại|hold + off · hold off on the booking|🔧 Động từ kinh doanh|Let us hold off on the booking until the deposit clears.|Hãy tạm hoãn đặt chỗ cho tới khi tiền cọc về.
+call off|huỷ bỏ|call + off · call off the shipment|🔧 Động từ kinh doanh|They called off the shipment two days before loading.|Họ huỷ lô hàng hai ngày trước khi xếp hàng.
+carry out|tiến hành thực hiện|carry + out · carry out an inspection|🔧 Động từ kinh doanh|We carry out an inspection before every container is sealed.|Chúng tôi tiến hành kiểm tra trước khi niêm phong mỗi container.
+draw up|soạn thảo văn bản|draw + up · draw up a contract|🔧 Động từ kinh doanh|Our lawyer will draw up the agreement this week.|Luật sư của chúng tôi sẽ soạn thảo thoả thuận tuần này.
+set out|nêu rõ, trình bày|set + out · set out the terms|🔧 Động từ kinh doanh|The email sets out the terms we discussed.|Email này nêu rõ các điều khoản chúng ta đã bàn.
+lay down|quy định, đặt ra|lay + down · lay down the conditions|🔧 Động từ kinh doanh|The contract lays down clear conditions for cancellation.|Hợp đồng đặt ra điều kiện huỷ rõ ràng.
+break down|phân tích chi tiết|break + down · break down the cost|🔧 Động từ kinh doanh|Could you break down the cost by item?|Bạn có thể phân tích chi phí theo từng mặt hàng không?
+factor in|tính đến yếu tố|factor + in · factor in the duty|🔧 Động từ kinh doanh|Remember to factor in the import duty at destination.|Nhớ tính đến thuế nhập khẩu tại nơi đến.
+account for|giải thích, chiếm tỷ lệ|account + for · account for the difference|🔧 Động từ kinh doanh|Freight accounts for 18% of my landed cost.|Cước vận chuyển chiếm 18% giá vốn tới kho của tôi.
+rule out|loại trừ khả năng|rule + out · rule out air freight|🔧 Động từ kinh doanh|We can rule out air freight at this volume.|Chúng ta có thể loại trừ hàng không với sản lượng này.
+narrow down|thu hẹp lựa chọn|narrow + down · narrow down the options|🔧 Động từ kinh doanh|We narrowed down the options to two forwarders.|Chúng tôi thu hẹp lựa chọn còn hai công ty giao nhận.
+weigh up|cân nhắc kỹ|weigh + up · weigh up the options|🔧 Động từ kinh doanh|Weigh up the cost against the risk before deciding.|Hãy cân nhắc chi phí so với rủi ro trước khi quyết định.
+put forward|đề xuất đưa ra|put + forward · put forward a proposal|🔧 Động từ kinh doanh|I put forward a proposal with three price levels.|Tôi đưa ra đề xuất với ba mức giá.
+back down|nhượng bộ rút lui|back + down · back down on the price|🔧 Động từ kinh doanh|I did not back down and they accepted the price.|Tôi không nhượng bộ và họ đã chấp nhận mức giá.
+stand by|giữ nguyên cam kết|stand + by · stand by our quotation|🔧 Động từ kinh doanh|We stand by our quotation for another fifteen days.|Chúng tôi giữ nguyên báo giá thêm mười lăm ngày.
+go ahead|tiến hành đi|go + ahead · give the go-ahead|🔧 Động từ kinh doanh|Once you give the go-ahead, production starts the same day.|Khi bạn cho phép tiến hành, sản xuất bắt đầu ngay hôm đó.
+fall through|đổ bể, không thành|fall + through · the deal fell through|🔧 Động từ kinh doanh|The deal fell through when their bank refused the credit.|Thương vụ đổ bể khi ngân hàng của họ từ chối tín dụng.
+follow suit|làm theo tương tự|follow + suit (bộ bài) · competitors followed suit|🔧 Động từ kinh doanh|When we raised prices, two competitors followed suit.|Khi chúng tôi tăng giá, hai đối thủ cũng làm theo.
+scale back|thu hẹp quy mô|scale + back · scale back the order|🔧 Động từ kinh doanh|They scaled back the order from four containers to two.|Họ giảm đơn hàng từ bốn container xuống hai.
+ramp up|tăng cường mở rộng|ramp + up · ramp up production|🔧 Động từ kinh doanh|We ramped up production for the autumn season.|Chúng tôi tăng cường sản xuất cho mùa thu.
+phase out|loại bỏ dần|phase + out · phase out the old model|🔧 Động từ kinh doanh|We are phasing out the old packaging by December.|Chúng tôi loại bỏ dần bao bì cũ trước tháng Mười Hai.
+roll back|thu hồi, quay lại mức cũ|roll + back · roll back the price increase|🔧 Động từ kinh doanh|They asked us to roll back the price increase.|Họ đề nghị chúng tôi rút lại mức tăng giá.
+write off|xoá sổ khoản nợ|write + off · write off the debt|🔧 Động từ kinh doanh|After two years we wrote off the debt.|Sau hai năm chúng tôi xoá sổ khoản nợ.
+take over|tiếp quản|take + over · take over the account|🔧 Động từ kinh doanh|A new buyer took over the account last month.|Một người mua mới tiếp quản tài khoản tháng trước.
+hand over|bàn giao lại|hand + over · hand over the documents|🔧 Động từ kinh doanh|We hand over the original documents against payment.|Chúng tôi bàn giao chứng từ gốc khi nhận thanh toán.
+step up|tăng cường đẩy mạnh|step + up · step up quality control|🔧 Động từ kinh doanh|We stepped up quality control after the complaint.|Chúng tôi tăng cường kiểm soát chất lượng sau khiếu nại.
+stem from|bắt nguồn từ|stem + from · the problem stems from|🔧 Động từ kinh doanh|The problem stems from an unclear specification.|Vấn đề bắt nguồn từ một bảng quy cách không rõ ràng.
+result in|dẫn đến kết quả|result + in · result in a delay|🔧 Động từ kinh doanh|The strike resulted in a two-week delay.|Cuộc đình công dẫn đến chậm trễ hai tuần.
+give rise to|làm phát sinh|give + rise + to · give rise to a dispute|🔧 Động từ kinh doanh|Vague wording gave rise to a costly dispute.|Câu chữ mơ hồ làm phát sinh một tranh chấp tốn kém.
+hinge on|phụ thuộc vào|hinge (bản lề) + on · the deal hinges on financing|🔧 Động từ kinh doanh|The whole deal hinges on their bank approving the credit.|Cả thương vụ phụ thuộc vào việc ngân hàng của họ duyệt tín dụng.
+be contingent on|tuỳ thuộc vào điều kiện|contingent + on · contingent on approval|🔧 Động từ kinh doanh|Shipment is contingent on receiving the deposit by Friday.|Việc giao hàng tuỳ thuộc vào việc nhận cọc trước thứ Sáu.
+be conducive to|có lợi cho, thuận cho|conducive + to · conducive to a good relationship|🔧 Động từ kinh doanh|Transparent pricing is conducive to a long relationship.|Giá minh bạch có lợi cho một mối quan hệ lâu dài.
+be instrumental in|đóng vai trò then chốt|instrumental + in · instrumental in winning the account|🔧 Động từ kinh doanh|Their agent was instrumental in winning the account.|Đại lý của họ đóng vai trò then chốt trong việc giành được khách.
+be indicative of|cho thấy dấu hiệu của|indicative + of · indicative of a wider problem|🔧 Động từ kinh doanh|The late reply may be indicative of a wider problem.|Việc trả lời chậm có thể cho thấy một vấn đề lớn hơn.
+be subject to change|có thể thay đổi|subject + change · prices are subject to change|🔧 Động từ kinh doanh|Freight rates are subject to change without notice.|Cước vận chuyển có thể thay đổi mà không cần báo trước.
+be liable to|dễ bị, có nguy cơ|liable + to · liable to delay|🔧 Động từ kinh doanh|Perishable goods are liable to delay at inspection.|Hàng dễ hỏng có nguy cơ bị chậm khi kiểm tra.
+be entitled to|có quyền được hưởng|entitled + to · entitled to a refund|🔧 Động từ kinh doanh|You are entitled to a refund if the goods fail inspection.|Bạn có quyền được hoàn tiền nếu hàng không đạt kiểm tra.
+be obliged to|có nghĩa vụ phải|obliged + to · obliged to notify|🔧 Động từ kinh doanh|We are obliged to notify you within 48 hours.|Chúng tôi có nghĩa vụ thông báo cho bạn trong 48 giờ.
+comprehensive|toàn diện|com- + prehendere (nắm) · a comprehensive quotation|🔧 Động từ kinh doanh|I send a comprehensive quotation that answers every question.|Tôi gửi báo giá toàn diện trả lời mọi câu hỏi.
+preliminary|sơ bộ, ban đầu|prae- + limen (ngưỡng cửa) · a preliminary offer|🔧 Động từ kinh doanh|This is a preliminary offer pending the final specification.|Đây là chào giá sơ bộ, chờ quy cách cuối cùng.
+provisional|tạm thời|provide + -isional · a provisional booking|🔧 Động từ kinh doanh|We made a provisional booking for the 22nd.|Chúng tôi đặt chỗ tạm thời cho ngày 22.
+indicative price|giá tham khảo|indicative + price · an indicative price only|🔧 Động từ kinh doanh|This is an indicative price, not a firm offer.|Đây là giá tham khảo, không phải chào giá chắc chắn.
+substantial|đáng kể, lớn|substantia (bản chất) + -al · a substantial order|🔧 Động từ kinh doanh|A substantial order justifies a dedicated production line.|Một đơn hàng lớn xứng đáng có dây chuyền riêng.
+marginal|không đáng kể|margin + -al · a marginal improvement|🔧 Động từ kinh doanh|The saving is marginal and not worth the risk.|Khoản tiết kiệm không đáng kể và không đáng để mạo hiểm.
+negligible|không đáng kể, nhỏ nhặt|negligere (bỏ qua) + -ible · a negligible difference|🔧 Động từ kinh doanh|The weight difference is negligible for customs.|Chênh lệch trọng lượng là không đáng kể với hải quan.
+viable alternative|phương án khả thi|viable + alternative · a viable alternative supplier|🔧 Động từ kinh doanh|Rail is a viable alternative when sea rates spike.|Đường sắt là phương án khả thi khi cước biển tăng vọt.
+mutually beneficial|có lợi cho đôi bên|mutual + -ly + beneficial · a mutually beneficial arrangement|🔧 Động từ kinh doanh|We are looking for a mutually beneficial arrangement.|Chúng tôi tìm kiếm một thoả thuận có lợi cho đôi bên.
+time-critical|gấp về thời gian|time + critical · a time-critical shipment|🔧 Động từ kinh doanh|This is a time-critical shipment for their launch date.|Đây là lô hàng gấp cho ngày ra mắt của họ.
+cost-prohibitive|đắt đến mức không khả thi|cost + prohibitive · air freight is cost-prohibitive|🔧 Động từ kinh doanh|Air freight is cost-prohibitive for a product at this price.|Hàng không đắt đến mức không khả thi với sản phẩm giá này.
+labour-intensive|tốn nhiều nhân công|labour + intensive · a labour-intensive process|🔧 Động từ kinh doanh|Hand weaving is labour-intensive and hard to scale.|Dệt tay tốn nhiều nhân công và khó mở rộng.
+capital-intensive|cần nhiều vốn|capital + intensive · a capital-intensive business|🔧 Động từ kinh doanh|Manufacturing is capital-intensive; trading is not.|Sản xuất cần nhiều vốn; thương mại thì không.
+customer-centric|lấy khách hàng làm trung tâm|customer + centric · a customer-centric approach|🔧 Động từ kinh doanh|A customer-centric approach costs nothing but attention.|Cách tiếp cận lấy khách làm trung tâm chỉ tốn sự chú tâm.
+detail-oriented|chú trọng chi tiết|detail + oriented · a detail-oriented supplier|🔧 Động từ kinh doanh|Export documents reward the detail-oriented.|Chứng từ xuất khẩu tưởng thưởng người chú trọng chi tiết.
+results-driven|hướng đến kết quả|results + driven · a results-driven partner|🔧 Động từ kinh doanh|Buyers want a results-driven partner, not a busy one.|Người mua muốn đối tác hướng kết quả, không phải người bận rộn.

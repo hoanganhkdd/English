@@ -1,0 +1,21 @@
+# ==== File của app tiếng Trung (không thuộc repo English) ====
+HA.py
+HA_*.py
+HA_*.json
+HA_*.bat
+HA_requirements.txt
+HSK1_*.pdf
+HSK1_*.xlsx
+HSK_import.py
+
+# ==== Cache / rác / backup ====
+__pycache__/
+*.pyc
+*_backup.xlsx
+test_del.txt
+EN_Business_Vocab_500.xlsx
+EN_seed_all.txt
+
+# ==== Hệ điều hành ====
+.DS_Store
+Thumbs.db

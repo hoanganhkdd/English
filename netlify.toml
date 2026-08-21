@@ -1,0 +1,11 @@
+# Cấu hình Netlify cho app học tiếng Anh
+# Dùng khi deploy qua Git (kết nối repo) — publish thư mục webapp/ chứa index.html
+[build]
+  publish = "webapp"
+  command = ""
+
+# Mọi đường dẫn đều trả về index.html (app điều hướng bằng JS, không có route thật)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

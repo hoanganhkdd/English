@@ -1,0 +1,94 @@
+Dear Sir or Madam|Kính gửi Quý ông/Quý bà|dear + sir + madam · used when the name is unknown|📧 Email nâng cao|Dear Sir or Madam, I am writing regarding your recent enquiry.|Kính gửi Quý ông/Quý bà, tôi viết thư về thư hỏi hàng gần đây của quý vị.
+To whom it may concern|Kính gửi bên liên quan|to + whom + concern · a formal opening|📧 Email nâng cao|To whom it may concern: this letter confirms our business relationship.|Kính gửi bên liên quan: thư này xác nhận quan hệ kinh doanh của chúng tôi.
+Yours faithfully|Trân trọng (khi không biết tên)|yours + faith + -fully · close after Dear Sir|📧 Email nâng cao|Yours faithfully, Hoang Anh, Export Manager.|Trân trọng, Hoàng Anh, Trưởng phòng Xuất khẩu.
+Yours sincerely|Trân trọng (khi đã biết tên)|yours + sincere + -ly · close after Dear Mr Chen|📧 Email nâng cao|Yours sincerely, Hoang Anh.|Trân trọng, Hoàng Anh.
+Best regards|Trân trọng (thông dụng)|best + regard · the safest everyday close|📧 Email nâng cao|Best regards and thank you for your patience.|Trân trọng và cảm ơn sự kiên nhẫn của bạn.
+Warm regards|Thân ái|warm + regard · slightly friendlier close|📧 Email nâng cao|Warm regards from all of us in Hanoi.|Thân ái từ tất cả chúng tôi ở Hà Nội.
+subject line|dòng tiêu đề email|subject + line · write a clear subject line|📧 Email nâng cao|A clear subject line doubles your reply rate.|Dòng tiêu đề rõ ràng làm tỷ lệ hồi âm tăng gấp đôi.
+salutation|lời chào mở đầu|salutare (chào) + -ion · choose the right salutation|📧 Email nâng cao|Match the salutation to how they signed their last email.|Hãy chọn lời chào khớp với cách họ ký email trước.
+email sign-off|lời chào kết thư|sign + off · a professional sign-off|📧 Email nâng cao|Keep the same sign-off across every email you send.|Hãy giữ cùng một lời chào kết trong mọi email bạn gửi.
+signature block|khối chữ ký cuối email|signature + block · update your signature block|📧 Email nâng cao|Put your company registration number in the signature block.|Hãy ghi mã số doanh nghiệp trong khối chữ ký.
+cc|gửi bản sao cho|carbon copy · cc the forwarder|📧 Email nâng cao|I will cc our forwarder so everyone has the same information.|Tôi sẽ gửi bản sao cho công ty giao nhận để mọi người cùng nắm.
+bcc|gửi bản sao ẩn|blind carbon copy · never bcc a customer|📧 Email nâng cao|Never bcc a customer on a sensitive thread.|Đừng bao giờ gửi bản sao ẩn cho khách trong luồng nhạy cảm.
+reply all|trả lời tất cả|reply + all · avoid reply all|📧 Email nâng cao|Think twice before you hit reply all.|Hãy nghĩ kỹ trước khi bấm trả lời tất cả.
+forward|chuyển tiếp email|fore + ward (về phía) · forward the thread|📧 Email nâng cao|I have forwarded the thread to my colleague.|Tôi đã chuyển tiếp luồng email cho đồng nghiệp.
+thread|luồng email|thread (sợi chỉ) · keep it in one thread|📧 Email nâng cao|Please keep this discussion in one thread.|Vui lòng giữ thảo luận này trong một luồng.
+attachment|tệp đính kèm|attach + -ment · check the attachment|📧 Email nâng cao|I forgot the attachment; here it is.|Tôi quên tệp đính kèm; nó đây.
+enclosed|kèm theo (thư giấy)|en- + close + -ed · please find enclosed|📧 Email nâng cao|Please find enclosed the original certificate.|Vui lòng xem giấy chứng nhận gốc kèm theo.
+herewith|kèm theo đây|here + with · we send herewith|📧 Email nâng cao|We send herewith the signed proforma invoice.|Chúng tôi gửi kèm đây hoá đơn chiếu lệ đã ký.
+per your request|theo yêu cầu của bạn|per + your + request · per your request of 3 May|📧 Email nâng cao|Per your request, here is the breakdown by item.|Theo yêu cầu của bạn, đây là bảng chi tiết theo mặt hàng.
+with reference to|liên quan đến|reference · with reference to your email|📧 Email nâng cao|With reference to your email of 12 June, we confirm the price.|Liên quan đến email ngày 12/6 của bạn, chúng tôi xác nhận giá.
+we regret to inform you|chúng tôi rất tiếc phải báo|regret ← regreter (than tiếc) · a formal bad-news opener|📧 Email nâng cao|We regret to inform you that the vessel has been cancelled.|Chúng tôi rất tiếc phải báo rằng chuyến tàu đã bị huỷ.
+we are pleased to confirm|chúng tôi vui mừng xác nhận|pleased + confirm · a positive opener|📧 Email nâng cao|We are pleased to confirm your order of 12 pallets.|Chúng tôi vui mừng xác nhận đơn hàng 12 pa-lét của bạn.
+please be advised that|xin lưu ý rằng|please + advise · a neutral formal notice|📧 Email nâng cao|Please be advised that our office closes for Tet on 10 February.|Xin lưu ý văn phòng chúng tôi nghỉ Tết từ ngày 10 tháng Hai.
+please note that|xin lưu ý rằng|note ← nota (dấu) · please note the new address|📧 Email nâng cao|Please note that our bank details have not changed.|Xin lưu ý thông tin ngân hàng của chúng tôi không thay đổi.
+should you require|nếu bạn cần|should + require · should you require further details|📧 Email nâng cao|Should you require further details, please let me know.|Nếu bạn cần thêm chi tiết, xin cho tôi biết.
+do not hesitate to|đừng ngần ngại|hesitare (do dự) · do not hesitate to contact me|📧 Email nâng cao|Do not hesitate to contact me at any time.|Đừng ngần ngại liên hệ tôi bất cứ lúc nào.
+I trust this finds you well|Mong bạn vẫn khoẻ|trust + find + well · a warm formal opener|📧 Email nâng cao|I trust this email finds you well after the holiday.|Mong email này đến khi bạn vẫn khoẻ sau kỳ nghỉ.
+apologies for the delay|xin lỗi vì phản hồi chậm|apology + delay · apologies for the delay in replying|📧 Email nâng cao|Apologies for the delay in replying; I was at a trade fair.|Xin lỗi vì phản hồi chậm; tôi đang dự hội chợ.
+thank you for your patience|cảm ơn sự kiên nhẫn|patience ← pati (chịu đựng) · thank you for your patience|📧 Email nâng cao|Thank you for your patience while we checked with the mill.|Cảm ơn sự kiên nhẫn của bạn trong lúc chúng tôi hỏi nhà máy.
+thank you in advance|cảm ơn trước|in + advance · thank you in advance for your help|📧 Email nâng cao|Thank you in advance for your quick confirmation.|Cảm ơn trước vì sự xác nhận nhanh của bạn.
+as agreed|như đã thống nhất|as + agree + -d · as agreed on our call|📧 Email nâng cao|As agreed on our call, I will absorb half the freight.|Như đã thống nhất qua điện thoại, tôi chịu một nửa cước.
+as requested|như đã yêu cầu|as + request + -ed · as requested, please find|📧 Email nâng cao|As requested, please find the test report attached.|Như đã yêu cầu, vui lòng xem báo cáo kiểm định đính kèm.
+for your reference|để bạn tham khảo|for + your + reference · attached for your reference|📧 Email nâng cao|I attach last year's specification for your reference.|Tôi đính kèm quy cách năm ngoái để bạn tham khảo.
+for your records|để bạn lưu hồ sơ|for + your + record · keep a copy for your records|📧 Email nâng cao|Please keep a copy of this invoice for your records.|Vui lòng giữ một bản hoá đơn này để lưu hồ sơ.
+at your convenience|khi bạn thuận tiện|convenience · call me at your convenience|📧 Email nâng cao|Please call me at your convenience this week.|Vui lòng gọi tôi khi thuận tiện trong tuần này.
+prompt|nhanh chóng, kịp thời|promptus (sẵn sàng) · prompt payment / prompt attention|📧 Email nâng cao|Thank you for your prompt attention to this matter.|Cảm ơn bạn đã xử lý nhanh chóng việc này.
+courteously|một cách lịch thiệp|courteous + -ly · decline courteously|📧 Email nâng cao|Decline courteously and leave the door open.|Hãy từ chối lịch thiệp và để ngỏ cánh cửa.
+concise|ngắn gọn, súc tích|con- + cis ← caedere (cắt) · keep the email concise|📧 Email nâng cao|Keep every business email concise and scannable.|Hãy giữ mọi email công việc ngắn gọn và dễ lướt.
+verbose|dài dòng|verbum (từ ngữ) + -ose · avoid verbose writing|📧 Email nâng cao|Verbose emails get read last or not at all.|Email dài dòng bị đọc sau cùng hoặc không được đọc.
+bullet point|gạch đầu dòng|bullet + point · use bullet points|📧 Email nâng cao|Use bullet points when you list more than three items.|Hãy dùng gạch đầu dòng khi liệt kê quá ba mục.
+call to action|lời kêu gọi hành động|call + action · end with a clear call to action|📧 Email nâng cao|End every email with one clear call to action.|Hãy kết mỗi email bằng một lời kêu gọi hành động rõ ràng.
+tone|giọng văn|tonos (âm) · adjust the tone|📧 Email nâng cao|Adjust the tone when you write to a first-time buyer.|Hãy điều chỉnh giọng văn khi viết cho khách lần đầu.
+formal register|văn phong trang trọng|formal + register · use a formal register|📧 Email nâng cao|German buyers expect a formal register in writing.|Khách Đức mong đợi văn phong trang trọng trong thư từ.
+informal|thân mật, không trang trọng|in- + formal · an informal follow-up|📧 Email nâng cao|After three orders an informal tone is fine.|Sau ba đơn hàng thì giọng thân mật là ổn.
+passive voice|thể bị động|passive + voice · avoid the passive voice|📧 Email nâng cao|The passive voice hides who is responsible.|Thể bị động che giấu ai chịu trách nhiệm.
+hedging language|cách nói giảm nhẹ|hedge + -ing + language · use hedging language|📧 Email nâng cao|Hedging language such as it seems softens bad news.|Cách nói giảm nhẹ như có vẻ làm dịu tin xấu.
+euphemism|cách nói tránh|eu- (tốt) + phemi (nói) · a polite euphemism|📧 Email nâng cao|Delayed is a euphemism for late.|Chậm tiến độ là cách nói tránh của trễ hạn.
+diplomatic wording|cách diễn đạt khéo léo|diplomatic + wording · choose diplomatic wording|📧 Email nâng cao|Diplomatic wording keeps a difficult email professional.|Cách diễn đạt khéo giữ cho email khó vẫn chuyên nghiệp.
+proofread|đọc soát lỗi|proof + read · proofread before sending|📧 Email nâng cao|Always proofread a price before you press send.|Luôn soát lại con số giá trước khi bấm gửi.
+typo|lỗi đánh máy|typographical error · a typo in the price|📧 Email nâng cao|A typo in the price can cost you thousands.|Một lỗi đánh máy ở giá có thể khiến bạn mất hàng ngàn đô.
+autocorrect|tự động sửa chữ|auto- + correct · turn off autocorrect|📧 Email nâng cao|Autocorrect once changed our port to Portugal.|Tự động sửa từng đổi cảng của chúng tôi thành Bồ Đào Nha.
+read receipt|báo đã đọc|read + receipt · request a read receipt|📧 Email nâng cao|Do not request a read receipt from a new buyer.|Đừng yêu cầu báo đã đọc từ một khách hàng mới.
+out of office|thông báo vắng mặt|out + office · set an out of office reply|📧 Email nâng cao|Set an out of office reply before every trade fair.|Hãy đặt trả lời tự động vắng mặt trước mỗi hội chợ.
+auto-reply|trả lời tự động|auto- + reply · configure an auto-reply|📧 Email nâng cao|My auto-reply tells buyers when I will be back online.|Trả lời tự động của tôi cho khách biết khi nào tôi trở lại.
+canned response|câu trả lời soạn sẵn|can (đóng hộp) + response · save canned responses|📧 Email nâng cao|I keep eight canned responses for common questions.|Tôi giữ tám câu trả lời soạn sẵn cho câu hỏi thường gặp.
+mail merge|trộn thư hàng loạt|mail + merge · run a mail merge|📧 Email nâng cao|A mail merge lets you personalise 200 emails at once.|Trộn thư giúp bạn cá nhân hoá 200 email cùng lúc.
+open rate|tỷ lệ mở email|open + rate · improve the open rate|📧 Email nâng cao|My open rate went from 18% to 34% after I shortened subjects.|Tỷ lệ mở email của tôi từ 18% lên 34% sau khi rút ngắn tiêu đề.
+bounce|email bị trả lại|bounce (nảy lại) · a hard bounce|📧 Email nâng cao|A hard bounce means the address no longer exists.|Email trả lại cứng nghĩa là địa chỉ không còn tồn tại.
+spam filter|bộ lọc thư rác|spam + filter · avoid the spam filter|📧 Email nâng cao|Too many links push your email into the spam filter.|Quá nhiều đường dẫn đẩy email của bạn vào bộ lọc thư rác.
+domain|tên miền|dominium (quyền sở hữu) · use a company domain|📧 Email nâng cao|Use a company domain, never a free mailbox, for quotes.|Hãy dùng tên miền công ty, đừng dùng hộp thư miễn phí để báo giá.
+phishing|lừa đảo qua email giả|fishing (câu cá) · a phishing email|📧 Email nâng cao|A phishing email asked us to change the bank account.|Một email lừa đảo yêu cầu chúng tôi đổi tài khoản ngân hàng.
+spoofed address|địa chỉ giả mạo|spoof + address · check for a spoofed address|📧 Email nâng cao|Check character by character for a spoofed address.|Hãy kiểm tra từng ký tự để phát hiện địa chỉ giả mạo.
+verify by phone|xác minh qua điện thoại|verify + phone · always verify by phone|📧 Email nâng cao|Always verify bank changes by phone, never by email.|Luôn xác minh thay đổi ngân hàng qua điện thoại, không qua email.
+escalate in writing|chuyển cấp bằng văn bản|escalate + writing · escalate in writing after two reminders|📧 Email nâng cao|After two reminders I escalate in writing to their manager.|Sau hai lần nhắc, tôi chuyển cấp bằng văn bản tới quản lý của họ.
+formal notice|thông báo chính thức|formal + notice · serve a formal notice|📧 Email nâng cao|We served a formal notice of late payment.|Chúng tôi gửi thông báo chính thức về việc chậm thanh toán.
+demand letter|thư yêu cầu thanh toán|demand + letter · send a demand letter|📧 Email nâng cao|A polite demand letter recovered the money in nine days.|Một thư yêu cầu lịch sự đã thu hồi tiền trong chín ngày.
+reminder schedule|lịch nhắc nợ|reminder + schedule · set a reminder schedule|📧 Email nâng cao|My reminder schedule is day 3, day 10 and day 20.|Lịch nhắc nợ của tôi là ngày 3, ngày 10 và ngày 20.
+chase|đôn đốc, nhắc nhở|chase ← chacier (đuổi theo) · chase an overdue invoice|📧 Email nâng cao|I chase an overdue invoice politely but relentlessly.|Tôi đòi hoá đơn quá hạn một cách lịch sự nhưng bền bỉ.
+acknowledge receipt|xác nhận đã nhận|acknowledge + receipt · please acknowledge receipt|📧 Email nâng cao|Please acknowledge receipt of these documents.|Vui lòng xác nhận đã nhận các chứng từ này.
+confirm in writing|xác nhận bằng văn bản|confirm + writing · confirm in writing within 24 hours|📧 Email nâng cao|Please confirm in writing within 24 hours.|Vui lòng xác nhận bằng văn bản trong 24 giờ.
+summarise|tóm tắt|summa (tổng) + -ise · summarise the key points|📧 Email nâng cao|I summarise every call in five bullet points.|Tôi tóm tắt mỗi cuộc gọi thành năm gạch đầu dòng.
+outline|phác thảo, nêu khái quát|out + line · outline the proposal|📧 Email nâng cao|Let me outline the proposal in three paragraphs.|Để tôi phác thảo đề xuất trong ba đoạn.
+elaborate|trình bày chi tiết hơn|e- + labor (công sức) + -ate · could you elaborate|📧 Email nâng cao|Could you elaborate on the packing requirement?|Bạn có thể trình bày chi tiết hơn về yêu cầu đóng gói không?
+reiterate|nhắc lại nhấn mạnh|re- + iterare (lặp) · reiterate the deadline|📧 Email nâng cao|Let me reiterate that the deadline is firm.|Cho tôi nhắc lại rằng hạn chót là cố định.
+highlight|nhấn mạnh, làm nổi bật|high + light · highlight the change|📧 Email nâng cao|I highlighted the change in yellow for you.|Tôi đã tô vàng phần thay đổi cho bạn.
+attach the revised version|đính kèm bản đã sửa|attach + revise + -d + version · attach the revised version|📧 Email nâng cao|I attach the revised version with tracked changes.|Tôi đính kèm bản đã sửa có theo dõi thay đổi.
+tracked changes|chế độ theo dõi sửa đổi|track + -ed + changes · send it with tracked changes|📧 Email nâng cao|Send the contract back with tracked changes.|Hãy gửi lại hợp đồng ở chế độ theo dõi sửa đổi.
+red-line|bản sửa đổi có đánh dấu|red + line · a red-lined contract|📧 Email nâng cao|Their lawyer returned a heavily red-lined contract.|Luật sư của họ trả lại hợp đồng chi chít sửa đổi.
+version control|quản lý phiên bản tài liệu|version + control · keep version control|📧 Email nâng cao|Poor version control causes half of all contract errors.|Quản lý phiên bản kém gây ra một nửa số lỗi hợp đồng.
+final draft|bản thảo cuối|final + draft · circulate the final draft|📧 Email nâng cao|This is the final draft unless you have comments.|Đây là bản thảo cuối trừ khi bạn có ý kiến.
+pending your approval|chờ bạn phê duyệt|pending + approval · pending your approval we will ship|📧 Email nâng cao|Pending your approval, we will book the vessel tomorrow.|Chờ bạn phê duyệt, chúng tôi sẽ đặt tàu vào ngày mai.
+subject to confirmation|tuỳ thuộc xác nhận|subject + confirmation · prices subject to confirmation|📧 Email nâng cao|All prices are subject to confirmation at order.|Mọi mức giá tuỳ thuộc xác nhận tại thời điểm đặt hàng.
+without further delay|không chậm trễ thêm|without + further + delay · ship without further delay|📧 Email nâng cao|We will dispatch the goods without further delay.|Chúng tôi sẽ gửi hàng không chậm trễ thêm.
+at the latest|chậm nhất là|at + late + -est · by Friday at the latest|📧 Email nâng cao|I need your answer by Friday at the latest.|Tôi cần câu trả lời của bạn chậm nhất là thứ Sáu.
+effective from|có hiệu lực từ|effect + -ive + from · effective from 1 January|📧 Email nâng cao|The new price list is effective from 1 January.|Bảng giá mới có hiệu lực từ ngày 1 tháng Một.
+with immediate effect|có hiệu lực ngay|immediate + effect · with immediate effect|📧 Email nâng cao|The surcharge applies with immediate effect.|Phụ phí áp dụng có hiệu lực ngay.
+in the event that|trong trường hợp|event ← evenire (xảy ra) · in the event that the vessel is delayed|📧 Email nâng cao|In the event that the vessel is delayed, we will inform you at once.|Trong trường hợp tàu bị trễ, chúng tôi sẽ báo ngay.
+should there be|nếu có|should + there + be · should there be any discrepancy|📧 Email nâng cao|Should there be any discrepancy, please tell us within three days.|Nếu có sai lệch nào, vui lòng báo chúng tôi trong ba ngày.
+we look forward to receiving|chúng tôi mong nhận được|look forward + receive · we look forward to receiving your order|📧 Email nâng cao|We look forward to receiving your confirmation.|Chúng tôi mong nhận được xác nhận của bạn.
+it would be helpful if|sẽ rất hữu ích nếu|helpful + if · it would be helpful if you could|📧 Email nâng cao|It would be helpful if you could send photos of the damage.|Sẽ rất hữu ích nếu bạn gửi ảnh phần hư hỏng.
+I am afraid there has been|tôi e rằng đã xảy ra|afraid + there has been · I am afraid there has been a mistake|📧 Email nâng cao|I am afraid there has been a mistake on the invoice.|Tôi e rằng đã có nhầm lẫn trên hoá đơn.
+please accept my apologies|xin nhận lời xin lỗi của tôi|accept + apology · please accept my sincere apologies|📧 Email nâng cao|Please accept my sincere apologies for the short shipment.|Xin nhận lời xin lỗi chân thành của tôi vì giao thiếu hàng.
+rest assured|xin cứ yên tâm|rest + assure + -d · rest assured we will|📧 Email nâng cao|Rest assured we will replace the goods at our cost.|Xin cứ yên tâm chúng tôi sẽ thay hàng bằng chi phí của mình.
+going forward|từ nay trở đi|go + -ing + forward · going forward we will|📧 Email nâng cao|Going forward we will photograph every pallet before loading.|Từ nay trở đi chúng tôi sẽ chụp ảnh từng pa-lét trước khi xếp hàng.

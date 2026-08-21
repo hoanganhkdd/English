@@ -1,0 +1,77 @@
+per annum|mỗi năm|La-tinh: theo năm · 12% per annum|🔢 Số liệu & Thời gian|Interest is charged at 9% per annum.|Lãi được tính 9% mỗi năm.
+per capita|bình quân đầu người|La-tinh: theo đầu người · per capita consumption|🔢 Số liệu & Thời gian|Per capita consumption of coffee is rising in China.|Tiêu thụ cà phê bình quân đầu người đang tăng ở Trung Quốc.
+pro rata|theo tỷ lệ|La-tinh: theo tỷ lệ · charged pro rata|🔢 Số liệu & Thời gian|Storage is charged pro rata for a partial month.|Phí lưu kho tính theo tỷ lệ cho tháng lẻ.
+net of|đã trừ đi|net + of · net of commission|🔢 Số liệu & Thời gian|The figure is net of commission and bank charges.|Con số này đã trừ hoa hồng và phí ngân hàng.
+inclusive of|đã bao gồm|include + -ive + of · inclusive of freight|🔢 Số liệu & Thời gian|The price is inclusive of freight but exclusive of duty.|Giá đã bao gồm cước nhưng chưa gồm thuế.
+exclusive of|chưa bao gồm|exclusive + of · exclusive of VAT|🔢 Số liệu & Thời gian|All prices are exclusive of VAT.|Mọi mức giá chưa bao gồm thuế giá trị gia tăng.
+plus or minus|cộng trừ|plus + minus · plus or minus 3%|🔢 Số liệu & Thời gian|Weight tolerance is plus or minus 3%.|Dung sai trọng lượng là cộng trừ 3%.
+a fraction of|một phần nhỏ của|fraction ← frangere (bẻ) · a fraction of the cost|🔢 Số liệu & Thời gian|Sea freight is a fraction of the air freight cost.|Cước biển chỉ bằng một phần nhỏ chi phí hàng không.
+threefold|gấp ba lần|three + fold · increase threefold|🔢 Số liệu & Thời gian|Orders increased threefold after the trade fair.|Đơn hàng tăng gấp ba sau hội chợ.
+double|tăng gấp đôi|duplus (gấp đôi) · double the volume|🔢 Số liệu & Thời gian|If you double the volume I can improve the price.|Nếu bạn gấp đôi sản lượng tôi có thể cải thiện giá.
+halve|giảm một nửa|half + -ve · halve the lead time|🔢 Số liệu & Thời gian|We halved the lead time by pre-buying materials.|Chúng tôi giảm nửa thời gian giao bằng cách mua trước nguyên liệu.
+percentage point|điểm phần trăm|percentage + point · up two percentage points|🔢 Số liệu & Thời gian|Our margin fell two percentage points, not two percent.|Biên lợi nhuận giảm hai điểm phần trăm, không phải hai phần trăm.
+basis point|điểm cơ bản (0,01%)|basis + point · 25 basis points|🔢 Số liệu & Thời gian|The bank raised the rate by 25 basis points.|Ngân hàng tăng lãi suất 25 điểm cơ bản.
+round figure|con số làm tròn|round + figure · in round figures|🔢 Số liệu & Thời gian|In round figures, the order is worth 30,000 dollars.|Nói tròn số, đơn hàng trị giá 30.000 đô.
+rounding error|sai số làm tròn|rounding + error · a rounding error of two cents|🔢 Số liệu & Thời gian|The difference was just a rounding error.|Chênh lệch chỉ là sai số làm tròn.
+decimal point|dấu thập phân|decimal + point · watch the decimal point|🔢 Số liệu & Thời gian|Some markets use a comma where we use a decimal point.|Một số thị trường dùng dấu phẩy ở nơi ta dùng dấu thập phân.
+metric ton|tấn hệ mét|metric + ton · one metric ton is 1000 kg|🔢 Số liệu & Thời gian|One metric ton equals 1,000 kilograms exactly.|Một tấn hệ mét bằng đúng 1.000 kilôgam.
+short ton|tấn Mỹ (907 kg)|short + ton · quoted in short tons|🔢 Số liệu & Thời gian|US buyers may quote in short tons, not metric tons.|Khách Mỹ có thể báo giá theo tấn Mỹ, không phải tấn hệ mét.
+pound|pound (0,4536 kg)|pondus (trọng lượng) · priced per pound|🔢 Số liệu & Thời gian|Their price is per pound, so convert before comparing.|Giá của họ tính theo pound, nên hãy quy đổi trước khi so sánh.
+cubic metre|mét khối|cubic + metre · 28 cubic metres|🔢 Số liệu & Thời gian|A 20ft container holds about 28 cubic metres.|Container 20 feet chứa khoảng 28 mét khối.
+square metre|mét vuông|square + metre · 500 square metres of warehouse|🔢 Số liệu & Thời gian|We rent 500 square metres of warehouse space.|Chúng tôi thuê 500 mét vuông kho.
+linear metre|mét dài|linear + metre · priced per linear metre|🔢 Số liệu & Thời gian|Fabric is priced per linear metre, not per kilo.|Vải được tính theo mét dài, không phải theo ký.
+gross for net|tính cả bì như hàng|gross + for + net · sold gross for net|🔢 Số liệu & Thời gian|Some commodities are sold gross for net.|Một số hàng hoá được bán tính cả bì như hàng.
+tare weight|trọng lượng bì|tare ← tara (hao hụt) · deduct the tare weight|🔢 Số liệu & Thời gian|Deduct the tare weight of the pallet from the total.|Hãy trừ trọng lượng bì của pa-lét khỏi tổng.
+fiscal quarter|quý tài chính|fiscal + quarter · at the end of the fiscal quarter|🔢 Số liệu & Thời gian|Buyers push orders to the end of the fiscal quarter.|Người mua dồn đơn hàng vào cuối quý tài chính.
+calendar month|tháng dương lịch|calendar + month · within two calendar months|🔢 Số liệu & Thời gian|Payment is due within two calendar months.|Thanh toán đến hạn trong vòng hai tháng dương lịch.
+working days|ngày làm việc|working + days · within five working days|🔢 Số liệu & Thời gian|Clearance takes five working days, not five days.|Thông quan mất năm ngày làm việc, không phải năm ngày.
+lead time in weeks|thời gian giao tính theo tuần|lead time + weeks · a lead time of six weeks|🔢 Số liệu & Thời gian|Quote the lead time in weeks so nobody miscounts holidays.|Hãy báo thời gian giao theo tuần để không ai tính nhầm ngày lễ.
+back to back|liên tiếp nhau|back + to + back · two shipments back to back|🔢 Số liệu & Thời gian|We ran two shipments back to back in October.|Chúng tôi chạy hai lô hàng liên tiếp trong tháng Mười.
+ahead of schedule|sớm hơn kế hoạch|ahead + schedule · finish ahead of schedule|🔢 Số liệu & Thời gian|We finished four days ahead of schedule.|Chúng tôi hoàn thành sớm hơn kế hoạch bốn ngày.
+on the dot|đúng chính xác giờ|on + the + dot · arrive on the dot|🔢 Số liệu & Thời gian|The vessel arrived on the dot, which is rare.|Tàu đến đúng giờ chính xác, điều hiếm thấy.
+by close of business|trước giờ đóng cửa|close + business · by close of business Friday|🔢 Số liệu & Thời gian|Please confirm by close of business Friday.|Vui lòng xác nhận trước giờ đóng cửa thứ Sáu.
+within the hour|trong vòng một giờ|within + hour · reply within the hour|🔢 Số liệu & Thời gian|For urgent matters I reply within the hour.|Với việc khẩn tôi trả lời trong vòng một giờ.
+around the clock|suốt ngày đêm|around + clock · the port works around the clock|🔢 Số liệu & Thời gian|That port works around the clock, ours does not.|Cảng đó làm việc suốt ngày đêm, cảng của ta thì không.
+in due course|vào thời điểm thích hợp|due + course · we will advise in due course|🔢 Số liệu & Thời gian|We will advise the vessel name in due course.|Chúng tôi sẽ báo tên tàu vào thời điểm thích hợp.
+at short notice|báo gấp trong thời gian ngắn|short + notice · at very short notice|🔢 Số liệu & Thời gian|They cancelled at very short notice.|Họ huỷ với thông báo rất gấp.
+with hindsight|nhìn lại mới thấy|hind + sight · with hindsight we should have|🔢 Số liệu & Thời gian|With hindsight, we should have insured that shipment.|Nhìn lại, đáng ra chúng tôi nên bảo hiểm lô hàng đó.
+in the long run|về lâu dài|long + run · in the long run it pays|🔢 Số liệu & Thời gian|In the long run, reliability beats a low price.|Về lâu dài, sự tin cậy thắng giá thấp.
+in the short term|trong ngắn hạn|short + term · painful in the short term|🔢 Số liệu & Thời gian|Raising prices hurts in the short term.|Tăng giá gây đau trong ngắn hạn.
+year to date|từ đầu năm đến nay|year + to + date · sales year to date|🔢 Số liệu & Thời gian|Sales year to date are up 22%.|Doanh số từ đầu năm đến nay tăng 22%.
+month on month|so với tháng trước|month + on + month · flat month on month|🔢 Số liệu & Thời gian|Volumes were flat month on month.|Sản lượng đi ngang so với tháng trước.
+seasonally adjusted|đã điều chỉnh yếu tố mùa vụ|seasonal + -ly + adjusted · seasonally adjusted figures|🔢 Số liệu & Thời gian|Seasonally adjusted figures tell a different story.|Số liệu đã điều chỉnh mùa vụ kể một câu chuyện khác.
+moving average|đường trung bình động|moving + average · a three-month moving average|🔢 Số liệu & Thời gian|I plan on a three-month moving average, not one month.|Tôi lập kế hoạch theo trung bình động ba tháng, không phải một tháng.
+compound growth|tăng trưởng kép|compound + growth · compound annual growth|🔢 Số liệu & Thời gian|Compound annual growth of 12% doubles you in six years.|Tăng trưởng kép 12% mỗi năm giúp bạn gấp đôi sau sáu năm.
+baseline|mốc cơ sở so sánh|base + line · set a baseline|🔢 Số liệu & Thời gian|Set a baseline before you claim an improvement.|Hãy đặt mốc cơ sở trước khi tuyên bố cải thiện.
+outlier|giá trị bất thường|out + lie + -er · exclude the outlier|🔢 Số liệu & Thời gian|One outlier month distorted the whole average.|Một tháng bất thường làm méo cả số trung bình.
+correlation|mối tương quan|co- + relation · a strong correlation|🔢 Số liệu & Thời gian|There is a strong correlation between freight and my margin.|Có tương quan mạnh giữa cước vận chuyển và biên lợi nhuận của tôi.
+causation|quan hệ nhân quả|cause + -ation · correlation is not causation|🔢 Số liệu & Thời gian|Correlation is not causation, as any buyer will remind you.|Tương quan không phải nhân quả, như bất kỳ người mua nào sẽ nhắc bạn.
+sample size|cỡ mẫu thống kê|sample + size · a small sample size|🔢 Số liệu & Thời gian|Three complaints out of 900 units is a small sample size.|Ba khiếu nại trên 900 chiếc là cỡ mẫu nhỏ.
+margin of error|sai số cho phép|margin + error · a 5% margin of error|🔢 Số liệu & Thời gian|The forecast has a 15% margin of error.|Dự báo có sai số 15%.
+approximation|phép ước lượng|approximate + -ion · a rough approximation|🔢 Số liệu & Thời gian|That figure is a rough approximation, not a quotation.|Con số đó là ước lượng thô, không phải báo giá.
+order of magnitude|bậc độ lớn|order + magnitude · an order of magnitude larger|🔢 Số liệu & Thời gian|Their volume is an order of magnitude larger than mine.|Sản lượng của họ lớn hơn của tôi một bậc độ lớn.
+break down by|phân tách theo tiêu chí|break down + by · break down by market|🔢 Số liệu & Thời gian|Can you break the figures down by market?|Bạn có thể tách số liệu theo thị trường không?
+weighted average|trung bình có trọng số|weighted + average · the weighted average price|🔢 Số liệu & Thời gian|The weighted average price is 3.12 dollars per unit.|Giá trung bình có trọng số là 3,12 đô mỗi chiếc.
+median|giá trị trung vị|medianus (ở giữa) · the median order size|🔢 Số liệu & Thời gian|The median order size is more useful than the average.|Kích thước đơn hàng trung vị hữu ích hơn số trung bình.
+cumulative|luỹ kế, cộng dồn|cumulare (chất đống) + -ive · cumulative volume|🔢 Số liệu & Thời gian|Cumulative volume this year has passed 400 tonnes.|Sản lượng luỹ kế năm nay đã vượt 400 tấn.
+run rate|tốc độ chạy hiện tại|run + rate · at the current run rate|🔢 Số liệu & Thời gian|At the current run rate we will hit 60 containers.|Với tốc độ hiện tại chúng ta sẽ đạt 60 container.
+forecast horizon|tầm nhìn dự báo|forecast + horizon · a six-month forecast horizon|🔢 Số liệu & Thời gian|My forecast horizon is six months; beyond that it is guessing.|Tầm nhìn dự báo của tôi là sáu tháng; xa hơn là đoán mò.
+lag time|độ trễ thời gian|lag + time · the lag time between order and cash|🔢 Số liệu & Thời gian|The lag time between order and cash is 74 days.|Độ trễ giữa đơn hàng và tiền về là 74 ngày.
+turnaround|thời gian quay vòng|turn + around · a fast turnaround|🔢 Số liệu & Thời gian|A fast turnaround on quotes wins more business than price.|Báo giá quay vòng nhanh giành nhiều việc hơn là giá.
+capacity utilisation rate|tỷ lệ sử dụng công suất|capacity utilisation + rate · an 80% utilisation rate|🔢 Số liệu & Thời gian|An 80% utilisation rate leaves room for rush orders.|Tỷ lệ sử dụng 80% chừa chỗ cho đơn hàng gấp.
+headcount|số lượng nhân sự|head + count · a headcount of one|🔢 Số liệu & Thời gian|My headcount is one, and that is deliberate.|Số nhân sự của tôi là một, và đó là chủ ý.
+full-time equivalent|tương đương toàn thời gian|full + time + equivalent · 0.5 full-time equivalent|🔢 Số liệu & Thời gian|My assistant is 0.4 full-time equivalent.|Trợ lý của tôi tương đương 0,4 toàn thời gian.
+billable hours|giờ tính phí|billable + hours · track billable hours|🔢 Số liệu & Thời gian|I track my hours to see which customer really pays.|Tôi theo dõi giờ làm để biết khách nào thực sự sinh lời.
+unit of measure|đơn vị đo lường|unit + measure · agree the unit of measure|🔢 Số liệu & Thời gian|Always agree the unit of measure in writing.|Luôn thống nhất đơn vị đo lường bằng văn bản.
+conversion factor|hệ số quy đổi|conversion + factor · apply the conversion factor|🔢 Số liệu & Thời gian|Apply the conversion factor before comparing two quotes.|Hãy áp dụng hệ số quy đổi trước khi so sánh hai báo giá.
+imperial units|hệ đo lường Anh|imperial + units · convert from imperial units|🔢 Số liệu & Thời gian|US drawings still use imperial units.|Bản vẽ Mỹ vẫn dùng hệ đo lường Anh.
+metric system|hệ mét|metric + system · quoted in the metric system|🔢 Số liệu & Thời gian|We quote in the metric system and provide a conversion table.|Chúng tôi báo giá theo hệ mét và kèm bảng quy đổi.
+significant figures|chữ số có nghĩa|significant + figures · three significant figures|🔢 Số liệu & Thời gian|Quote the price to three significant figures, no more.|Hãy báo giá tới ba chữ số có nghĩa, không hơn.
+ceiling price|giá trần|ceiling + price · agree a ceiling price|🔢 Số liệu & Thời gian|We agreed a ceiling price for the whole year.|Chúng tôi thống nhất giá trần cho cả năm.
+floor price|giá sàn|floor + price · set a floor price|🔢 Số liệu & Thời gian|My floor price is fixed by the raw material cost.|Giá sàn của tôi được quyết bởi chi phí nguyên liệu.
+price band|khoảng giá|price + band · quote a price band|🔢 Số liệu & Thời gian|At this stage I can only give a price band.|Ở giai đoạn này tôi chỉ có thể đưa ra một khoảng giá.
+tiered pricing|định giá theo bậc|tier + -ed + pricing · use tiered pricing|🔢 Số liệu & Thời gian|Tiered pricing rewards volume without endless negotiation.|Định giá theo bậc thưởng cho sản lượng mà không cần đàm phán mãi.
+flat rate|giá cố định không đổi|flat + rate · charge a flat rate|🔢 Số liệu & Thời gian|We charge a flat rate for documentation.|Chúng tôi thu phí cố định cho chứng từ.
+sliding scale|thang trượt theo mức|sliding + scale · a sliding scale of commission|🔢 Số liệu & Thời gian|Commission follows a sliding scale from 2% to 5%.|Hoa hồng theo thang trượt từ 2% đến 5%.
+lump sum|khoản tiền trọn gói|lump + sum · pay a lump sum|🔢 Số liệu & Thời gian|They paid a lump sum for the exclusive rights.|Họ trả một khoản trọn gói cho quyền độc quyền.
+instalment|đợt thanh toán|in- + stall + -ment · pay in three instalments|🔢 Số liệu & Thời gian|The tooling cost is paid in three instalments.|Chi phí khuôn được trả thành ba đợt.
