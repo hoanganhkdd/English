@@ -22,6 +22,7 @@ progress.sentSrs = progress.sentSrs || {};         // hash câu -> {ef,interval,
 progress.playCount = progress.playCount || {};     // word(lowercase) -> số lần đã phát/nghe
 progress.plan = progress.plan || {};               // {date, wordsDone, sentsDone}
 progress.dailyList = progress.dailyList || {};     // {date, words:[...], sents:[...]}
+progress.exampleTx = progress.exampleTx || {};     // câu ví dụ -> {vi, zh, pinyin} (cache dịch)
 function save(){ localStorage.setItem(STORE, JSON.stringify(progress)); }
 function todayKey(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function logActivity(type, n=1){
@@ -224,7 +225,7 @@ function pushToPending(cands, {source="import", srcType="text", name="", url=""}
     const ex=inPending(c.word);
     if(ex){ ex.freq+=c.freq; dupRoom++; return; }           // đã có trong room tạm → gộp tần suất
     progress.pending.push({word:c.word, ipa:c.ipa||"", vi:c.vi||"", zh:c.zh||"", pinyin:c.pinyin||"",
-      pos:c.pos||"", phrase:!!c.phrase, example:c.example||"", exampleVi:c.exampleVi||"", freq:c.freq, source, srcType, at:Date.now()});
+      pos:c.pos||"", phrase:!!c.phrase, example:c.example||"", exampleVi:c.exampleVi||"", exampleZh:c.exampleZh||"", examplePinyin:c.examplePinyin||"", freq:c.freq, source, srcType, at:Date.now()});
     added++;
   });
   const rec={ id:hashText((name||"")+"|"+(url||"")+"|"+source+"|"+Date.now()).slice(0,8),
@@ -247,7 +248,7 @@ function confirmPending(words, roomName, topic){
   let n=0;
   progress.pending.filter(p=>set.has(p.word.toLowerCase())).forEach(p=>{
     if(addMyWord({word:p.word, ipa:p.ipa, vi:p.vi||"", zh:p.zh||"", pinyin:p.pinyin||"", pos:p.pos||"",
-      phrase:!!p.phrase, example:p.example||"", exampleVi:p.exampleVi||"", topic:topic||"", source:roomName||p.source||"import"})) n++;
+      phrase:!!p.phrase, example:p.example||"", exampleVi:p.exampleVi||"", exampleZh:p.exampleZh||"", examplePinyin:p.examplePinyin||"", topic:topic||"", source:roomName||p.source||"import"})) n++;
   });
   progress.pending = progress.pending.filter(p=>!set.has(p.word.toLowerCase()));
   save(); return n;
@@ -316,9 +317,21 @@ async function translateRich(word){
   if(!out.pos) out.pos=posGuess(word);
   return out;
 }
-// Dịch các mục trong room tạm (Việt + Trung + loại từ + dịch câu ví dụ sang Việt)
+// Dịch cả câu: Việt + Trung (Mandarin) + pinyin
+async function translateSentenceRich(text){
+  const out={vi:"",zh:"",pinyin:""};
+  try{ out.vi=await translateWord(text); }catch(_){}
+  try{
+    const u=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&dt=rm&q=${encodeURIComponent(text)}`;
+    const j=await (await fetch(u)).json();
+    out.zh=(j[0]||[]).map(s=>s[0]).filter(Boolean).join("").trim();
+    out.pinyin=(j[0]||[]).map(s=>s[2]).filter(Boolean).join(" ").trim();
+  }catch(_){}
+  return out;
+}
+// Dịch các mục trong room tạm (Việt + Trung + loại từ + câu ví dụ: Việt + Trung + pinyin)
 async function translatePending(onProg){
-  const todo=progress.pending.filter(p=>!p.vi||!p.zh||!p.pos||(p.example&&!p.exampleVi));
+  const todo=progress.pending.filter(p=>!p.vi||!p.zh||!p.pos||(p.example&&(!p.exampleVi||!p.exampleZh)));
   if(!todo.length) return 0;
   let done=0, ok=0; const conc=4;
   for(let i=0;i<todo.length;i+=conc){
@@ -328,7 +341,10 @@ async function translatePending(onProg){
         if(r.vi) p.vi=r.vi; if(r.zh) p.zh=r.zh; if(r.pinyin) p.pinyin=r.pinyin; if(r.pos) p.pos=p.pos||r.pos;
         if(r.vi) ok++;
       }
-      if(p.example && !p.exampleVi){ const ev=await translateWord(p.example); if(ev) p.exampleVi=ev; }
+      if(p.example && (!p.exampleVi||!p.exampleZh)){
+        const r=await translateSentenceRich(p.example);
+        if(r.vi) p.exampleVi=r.vi; if(r.zh) p.exampleZh=r.zh; if(r.pinyin) p.examplePinyin=r.pinyin;
+      }
       done++; if(onProg) onProg(done, todo.length);
     }));
   }
@@ -460,10 +476,18 @@ let enVoice = null, viVoice = null, zhVoice = null, allVoices = [];
 function scoreViVoice(v){
   let s=0; const n=(v.name||"").toLowerCase();
   if(/vi[-_]?vn/i.test(v.lang)) s+=10; else if(/^vi/i.test(v.lang)) s+=6;
-  if(/google/.test(n)) s+=5;                 // Google TTS tiếng Việt tự nhiên nhất
-  if(/natural|neural|online/.test(n)) s+=4;  // Microsoft/Edge natural voices
-  if(/(hoai|my|nam|linh|thu)/.test(n)) s+=2;
+  if(/natural|neural|online/.test(n)) s+=6;  // giọng Neural/Natural nghe chuẩn nhất (Edge/Microsoft)
+  if(/google/.test(n)) s+=5;                 // Google TTS tiếng Việt tự nhiên
+  if(/(hoaimy|hoai|namminh|nam|my|linh|thu|an)/.test(n)) s+=2;
+  if(v.localService===false) s+=1;           // giọng online thường tự nhiên hơn
   return s;
+}
+// Làm sạch text tiếng Việt trước khi đọc (bỏ ngoặc chú thích, tách biến thể) để phát âm rõ hơn
+function cleanVi(text){
+  return (text||"")
+    .replace(/\([^)]*\)/g," ")     // bỏ phần trong ngoặc (thường là chú thích/từ Anh)
+    .replace(/[;/|].*$/,"")         // chỉ đọc nghĩa đầu tiên nếu có nhiều nghĩa ngăn bởi ; / |
+    .replace(/\s+/g," ").trim();
 }
 function pickVoice(){
   const vs = speechSynthesis.getVoices(); allVoices = vs;
@@ -493,9 +517,9 @@ function speak(text, rate){
 function speakVi(text, rate){
   if(!('speechSynthesis' in window) || !text) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
+  const u = new SpeechSynthesisUtterance(cleanVi(text));
   u.lang = "vi-VN"; if(viVoice) u.voice = viVoice;
-  u.rate = rate || (progress.settings.viRate||1);
+  u.rate = rate || (progress.settings.viRate||0.95);
   speechSynthesis.speak(u);
 }
 // Đọc nghĩa tiếng Trung (Mandarin)
@@ -510,10 +534,10 @@ function speakZh(text, rate){
 function speakP(text, {lang="en-US", rate}={}){
   return new Promise(resolve=>{
     if(!('speechSynthesis' in window) || !text){ resolve(); return; }
-    const u=new SpeechSynthesisUtterance(text);
     const isVi=lang.startsWith("vi"), isZh=lang.startsWith("zh");
+    const u=new SpeechSynthesisUtterance(isVi?cleanVi(text):text);
     u.lang = isZh ? "zh-CN" : isVi ? "vi-VN" : "en-US";
-    u.rate = rate || (isZh ? (progress.settings.zhRate||1) : isVi ? (progress.settings.viRate||1) : (progress.settings.enRate||0.9));
+    u.rate = rate || (isZh ? (progress.settings.zhRate||1) : isVi ? (progress.settings.viRate||0.95) : (progress.settings.enRate||0.9));
     if(isZh && zhVoice) u.voice=zhVoice;
     else if(isVi && viVoice) u.voice=viVoice;
     else if(!isVi && !isZh && enVoice) u.voice=enVoice;
@@ -564,13 +588,23 @@ const Seq = {
       if(this.opts.onItem) this.opts.onItem(it, this.idx);
       if(this.opts.countPlay){ bumpPlay(it.en); save(); }
       seqBar(true, it);
+      const viFirst = progress.settings.viFirst!==false;   // mặc định: đọc tiếng Việt trước
+      // 1) Nếu bật viFirst: đọc nghĩa tiếng Việt trước
+      if(viFirst && this.opts.sayVi && it.vi){
+        await speakP(it.vi, {lang:"vi-VN"});
+        if(!this.playing || tok!==this.token) break;
+        await new Promise(r=>setTimeout(r,180));
+      }
+      // 2) Đọc tiếng Anh
       await speakP(it.en, {lang:"en-US", rate:this.opts.rate});
       if(!this.playing || tok!==this.token) break;
-      if(this.opts.sayVi && it.vi){
+      // 3) Nếu KHÔNG bật viFirst: đọc tiếng Việt sau tiếng Anh
+      if(!viFirst && this.opts.sayVi && it.vi){
         await new Promise(r=>setTimeout(r,180));
         await speakP(it.vi, {lang:"vi-VN"});
+        if(!this.playing || tok!==this.token) break;
       }
-      if(!this.playing || tok!==this.token) break;
+      // 4) Tiếng Trung (nếu bật)
       if(this.opts.sayZh && it.zh){
         await new Promise(r=>setTimeout(r,180));
         await speakP(it.zh, {lang:"zh-CN"});
@@ -706,9 +740,21 @@ function srsCounts(){
 const SENTS = D.vocab.filter(v=>v.example).map(v=>({en:v.example, vi:v.exampleVi, topic:v.topic, word:v.word}));
 // Gộp câu built-in + câu ví dụ của từ tự thêm (nếu có)
 function allSentences(){
-  const my=progress.myWords.filter(w=>w.example).map(w=>({en:w.example, vi:w.exampleVi||"", topic:w.topic||w.source||"", word:w.word}));
+  const my=progress.myWords.filter(w=>w.example).map(w=>({en:w.example, vi:w.exampleVi||"", zh:w.exampleZh||"", pinyin:w.examplePinyin||"", topic:w.topic||w.source||"", word:w.word}));
   return SENTS.concat(my);
 }
+// Bản dịch câu ví dụ (Trung + pinyin) từ item hoặc cache
+function sentTxOf(s){
+  if(s.zh||s.pinyin) return {vi:s.vi||"", zh:s.zh||"", pinyin:s.pinyin||""};
+  const c=progress.exampleTx[s.en]; return c ? {vi:s.vi||c.vi||"", zh:c.zh, pinyin:c.pinyin} : {vi:s.vi||"", zh:"", pinyin:""};
+}
+window.translateSentExample=async function(en){
+  toast("Đang dịch (cần mạng)...");
+  const r=await translateSentenceRich(en);
+  progress.exampleTx[en]={vi:r.vi, zh:r.zh, pinyin:r.pinyin}; save();
+  if(typeof drawSentSrs==="function" && sentQueue.length) drawSentSrs();
+  toast("✓ Đã dịch");
+};
 
 /* ---------- SRS cho câu ví dụ ---------- */
 function sentKey(en){ return hashText(en); }
@@ -913,10 +959,12 @@ function drawSentSrs(){
         <button class="btn sm" id="ssSlow">🐢 Chậm</button>
       </div>
       <div id="ssBack" class="${sentShown?'':'hidden'}" style="margin-top:12px">
-        <div class="example-box"><div class="eh">${esc(s.en)}</div>
+        ${(()=>{ const tx=sentTxOf(s); return `<div class="example-box"><div class="eh">${esc(s.en)}</div>
           <div style="font-size:12px;color:var(--warn);margin-top:4px">🗣️ ${esc(amBoiForSentence(s.en))}</div>
-          <div style="margin-top:6px">${esc(s.vi||'')}</div>
-          ${s.topic?`<div style="font-size:11px;color:var(--muted);margin-top:4px">📂 ${esc(s.topic)}</div>`:''}</div>
+          <div style="margin-top:6px">🇻🇳 ${esc(tx.vi||'')}</div>
+          ${tx.zh?`<div style="margin-top:4px;color:var(--accent)">🀄 ${esc(tx.zh)}${tx.pinyin?` <span class="sub">(${esc(tx.pinyin)})</span>`:''} <span class="audio-btn" onclick="speakZh('${escq(tx.zh)}')">🔊</span></div>`
+                 :`<button class="btn sm" style="margin-top:6px" onclick="translateSentExample('${escq(s.en)}')">🌐 Dịch 中文 + pinyin</button>`}
+          ${s.topic?`<div style="font-size:11px;color:var(--muted);margin-top:4px">📂 ${esc(s.topic)}</div>`:''}</div>`; })()}
       </div>
       <div class="flash-controls" style="margin-top:12px">
         ${sentShown?`
@@ -1247,14 +1295,31 @@ function openDetail(v){
     </div>
     <div class="detail-row"><div class="lab">🌱 Gốc từ &amp; cụm từ đi kèm</div>
       <div class="breakdown">${esc(rootTxt)}</div></div>
-    ${v.example?`<div class="detail-row"><div class="lab">💡 Câu ví dụ</div>
+    ${v.example?(()=>{ const tx=exampleTxOf(v); return `<div class="detail-row"><div class="lab">💡 Câu ví dụ</div>
       <div class="example-box"><div class="eh">${esc(v.example)} <span class="audio-btn" onclick="speak('${escq(v.example)}')">🔊</span></div>
-      <div class="ep">${esc(v.exampleVi||'')}</div></div></div>`:""}
+      ${tx.vi?`<div class="ep">🇻🇳 ${esc(tx.vi)}</div>`:''}
+      ${tx.zh?`<div class="ep" style="color:var(--accent)">🀄 ${esc(tx.zh)}${tx.pinyin?` <span class="sub">(${esc(tx.pinyin)})</span>`:''} <span class="audio-btn" onclick="speakZh('${escq(tx.zh)}')">🔊</span></div>`
+             :`<button class="btn sm" style="margin-top:6px" onclick="translateDetailExample('${escq(v.word)}')">🌐 Dịch câu ví dụ sang 中文 + pinyin</button>`}
+      </div></div>`; })():""}
     ${v.topic?`<div class="detail-row"><div class="lab">📂 Chủ đề</div>${esc(v.topic)}</div>`:""}
     ${v.source?`<div class="detail-row"><div class="lab">📅 Nguồn</div>Tự thêm từ ${esc(v.source)}</div>`:""}
   `;
   $("#modal").classList.remove("hidden");
 }
+function exampleTxOf(v){
+  if(v.exampleZh||v.examplePinyin) return {vi:v.exampleVi||"", zh:v.exampleZh||"", pinyin:v.examplePinyin||""};
+  const c=progress.exampleTx[v.example]; return c || {vi:v.exampleVi||"", zh:"", pinyin:""};
+}
+window.translateDetailExample=async function(word){
+  const v=findWord(word); if(!v||!v.example) return;
+  toast("Đang dịch câu ví dụ (cần mạng)...");
+  const r=await translateSentenceRich(v.example);
+  progress.exampleTx[v.example]={vi:r.vi||v.exampleVi||"", zh:r.zh, pinyin:r.pinyin};
+  const mw=progress.myWords.find(w=>w.word.toLowerCase()===word.toLowerCase());
+  if(mw){ mw.exampleVi=mw.exampleVi||r.vi; mw.exampleZh=r.zh; mw.examplePinyin=r.pinyin; }
+  save(); openDetail(findWord(word));
+  toast("✓ Đã dịch câu ví dụ");
+};
 function closeModal(){ $("#modal").classList.add("hidden"); }
 $("#modal").onclick = e=>{ if(e.target.id==="modal") closeModal(); };
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
@@ -1964,7 +2029,7 @@ function drawPending(){
         <td><input type="checkbox" class="pChk" value="${esc(r.word)}" checked></td>
         <td><b>${r.freq}</b></td>
         <td class="han-cell">${esc(r.word)}${r.phrase?' <span class="sub" style="font-size:10px">cụm</span>':''}
-          ${r.example?`<div class="sub" style="font-size:11px;font-weight:400;max-width:260px;white-space:normal">💡 ${esc(r.example)}${r.exampleVi?`<br><span style="color:var(--muted)">→ ${esc(r.exampleVi)}</span>`:''}</div>`:''}</td>
+          ${r.example?`<div class="sub" style="font-size:11px;font-weight:400;max-width:260px;white-space:normal">💡 ${esc(r.example)}${r.exampleVi?`<br><span style="color:var(--muted)">🇻🇳 ${esc(r.exampleVi)}</span>`:''}${r.exampleZh?`<br><span style="color:var(--accent)">🀄 ${esc(r.exampleZh)}${r.examplePinyin?` (${esc(r.examplePinyin)})`:''}</span>`:''}</div>`:''}</td>
         <td style="font-size:11px;color:var(--accent)">${esc(r.pos||'')}</td>
         <td class="pin-cell">${esc(r.ipa||'')}</td>
         <td style="color:var(--warn)">${esc(amBoiAny(r.word))}</td>
@@ -2328,6 +2393,9 @@ RENDER.stats = () => {
         <label class="sub">Tốc độ <input type="range" id="setZhRate" min="0.6" max="1.3" step="0.05" value="${progress.settings.zhRate||1}"></label>
         <button class="btn sm" id="testZh">🔊 Thử</button>
       </div>
+      <div class="toolbar">
+        <label class="chip ${progress.settings.viFirst!==false?'active':''}" id="setViFirst">🔄 Đọc tiếng Việt TRƯỚC tiếng Anh</label>
+      </div>
       <p class="sub" id="voiceWarn"></p>
     </div>
     <div class="panel"><h3>📤 Thư viện keyword (chia sẻ giữa máy/điện thoại)</h3>
@@ -2370,6 +2438,7 @@ RENDER.stats = () => {
     if(notifySupported() && Notification.permission==="denied"){ $("#notifyMsg").textContent="Bạn đã chặn thông báo — mở cài đặt trình duyệt để cho phép."; return; }
     enableNotify(ok=>{ if(ok) scheduleReminder(); toast(ok?"Đã bật nhắc ôn tập":"Chưa cấp quyền thông báo"); RENDER.stats(); });
   };
+  if($("#setViFirst")) $("#setViFirst").onclick=e=>{ progress.settings.viFirst=!(progress.settings.viFirst!==false); save(); e.target.classList.toggle("active",progress.settings.viFirst!==false); };
   $("#testEn").onclick=()=>speak("Business negotiation and shipment schedule.");
   $("#testVi").onclick=()=>speakVi("Đây là giọng đọc tiếng Việt để đọc nghĩa của từ.");
   $("#testZh").onclick=()=>speakZh("这是用来朗读中文释义的声音。");
@@ -2396,7 +2465,7 @@ RENDER.stats = () => {
         let added=0, dup=0;
         words.forEach(w=>{ if(!w||!w.word) return;
           if(addMyWord({word:w.word, ipa:w.ipa||"", vi:w.vi||"", zh:w.zh||"", pinyin:w.pinyin||"",
-            pos:w.pos||"", phrase:!!w.phrase, example:w.example||"", exampleVi:w.exampleVi||"", source:w.source||"nhập từ file"})) added++; else dup++;
+            pos:w.pos||"", phrase:!!w.phrase, example:w.example||"", exampleVi:w.exampleVi||"", exampleZh:w.exampleZh||"", examplePinyin:w.examplePinyin||"", source:w.source||"nhập từ file"})) added++; else dup++;
         });
         $("#libMsg").textContent=`✓ Nhập ${added} từ mới · ${dup} đã có.`;
         toast(`Đã nhập ${added} từ vào thư viện`);
@@ -2405,7 +2474,7 @@ RENDER.stats = () => {
     };
     rd.readAsText(f);
   };
-  $("#resetBtn").onclick=()=>{ if(confirm("Xóa toàn bộ tiến độ học (kể cả từ tự thêm, room tạm, lịch sử)?")){ const st=progress.settings; progress={learned:{},srs:{},quizStats:{correct:0,total:0},listenStats:{correct:0,total:0},myWords:[],pending:[],imports:[],settings:st||{},activity:{},sentSrs:{},playCount:{},plan:{},dailyList:{}}; save(); RENDER.stats(); toast("Đã đặt lại"); } };
+  $("#resetBtn").onclick=()=>{ if(confirm("Xóa toàn bộ tiến độ học (kể cả từ tự thêm, room tạm, lịch sử)?")){ const st=progress.settings; progress={learned:{},srs:{},quizStats:{correct:0,total:0},listenStats:{correct:0,total:0},myWords:[],pending:[],imports:[],settings:st||{},activity:{},sentSrs:{},playCount:{},plan:{},dailyList:{},exampleTx:{}}; save(); RENDER.stats(); toast("Đã đặt lại"); } };
 };
 
 /* ---------- Utils ---------- */
