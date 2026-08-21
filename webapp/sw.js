@@ -1,11 +1,12 @@
-/* Service worker — offline cache for the English app */
-const CACHE = "en-app-v2";
-const CDN_CACHE = "en-cdn-v1";           // OCR/PDF libs + traineddata/wasm (cross-origin)
+/* Service worker — offline cache cho app tiếng Anh
+   App files: NETWORK-FIRST (luôn lấy bản mới khi online, fallback cache khi offline)
+   CDN libs (OCR/PDF): CACHE-FIRST (offline sau lần đầu) */
+const CACHE = "en-app-v3";
+const CDN_CACHE = "en-cdn-v1";
 const ASSETS = [
   "./", "./index.html", "./styles.css", "./app.js", "./appdata.js",
   "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"
 ];
-// Các host chứa thư viện tải theo yêu cầu (Tesseract.js, pdf.js, traineddata, wasm)
 const CDN_HOSTS = ["cdn.jsdelivr.net", "unpkg.com", "tessdata.projectnaptha.com", "raw.githubusercontent.com"];
 
 self.addEventListener("install", e => {
@@ -20,11 +21,10 @@ self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
 
-  // 1) Thư viện CDN (OCR/PDF): cache-first → offline sau lần đầu chạy
+  // 1) Thư viện CDN (OCR/PDF): cache-first → offline sau lần đầu
   if (CDN_HOSTS.includes(url.hostname)) {
     e.respondWith(
       caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-        // cache cả opaque response (no-cors) để dùng lại offline
         if (res && (res.ok || res.type === "opaque")) {
           const copy = res.clone();
           caches.open(CDN_CACHE).then(c => c.put(e.request, copy)).catch(()=>{});
@@ -35,13 +35,15 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // 2) Same-origin: cache-first, fallback index.html khi offline
-  if (url.origin !== location.origin) return; // YouTube/Youglish/Translate → mạng
+  // 2) Nguồn khác (YouTube/Youglish/Translate…) → mạng, không can thiệp
+  if (url.origin !== location.origin) return;
+
+  // 3) App cùng nguồn: NETWORK-FIRST → luôn có bản mới khi online, offline thì dùng cache
   e.respondWith(
-    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+    fetch(e.request).then(res => {
       const copy = res.clone();
       caches.open(CACHE).then(c => c.put(e.request, copy)).catch(()=>{});
       return res;
-    }).catch(() => caches.match("./index.html")))
+    }).catch(() => caches.match(e.request).then(hit => hit || caches.match("./index.html")))
   );
 });

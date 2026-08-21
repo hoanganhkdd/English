@@ -1479,42 +1479,64 @@ RENDER.sents = () => {
   const topics = [...new Set(SENTS.map(s=>s.topic).filter(Boolean))].sort();
   $("#view").innerHTML = `
     <h2 class="section-h">Câu ví dụ</h2>
-    <p class="sub">Kho ${SENTS.length} câu mẫu tiếng Anh thương mại — nghe, đọc và tra nghĩa.</p>
+    <p class="sub">Kho ${SENTS.length} câu mẫu tiếng Anh thương mại — nghe, đọc, tra nghĩa Việt &amp; 中文 + pinyin.</p>
     <div class="toolbar">
       <select id="sTopic"><option value="">Tất cả chủ đề</option>
         ${topics.map(t=>`<option ${sentTopic===t?'selected':''}>${esc(t)}</option>`).join("")}</select>
       <input class="txt" id="sQ" placeholder="Tìm trong câu...">
       <button class="btn sm" id="sPlay">▶ Đọc lần lượt</button>
-      <label class="sub">🇻🇳 nghĩa <input type="checkbox" id="sSayVi" checked></label>
+      <label class="sub">🇻🇳<input type="checkbox" id="sSayVi" checked></label>
+      <label class="sub">🇨🇳<input type="checkbox" id="sSayZh"></label>
+      <button class="btn sm" id="sTransAll">🀄 Dịch 中文 cả trang</button>
       <span class="count-pill" id="sCount"></span>
     </div>
-    <p class="sub" style="margin-top:-6px">💡 <b>Đọc lần lượt</b>: nghe từng câu (kèm nghĩa) trên→dưới — luyện nghe/nói rảnh tay khi lái xe.</p>
+    <p class="sub" style="margin-top:-6px">💡 <b>Đọc lần lượt</b>: đọc nghĩa Việt → English (→ 中文 nếu tick) trên→dưới — rảnh tay khi lái xe. Bấm 🀄 để dịch câu sang tiếng Trung + pinyin.</p>
     <div class="table-wrap"><table><thead><tr>
-      <th>Chủ đề</th><th>English &amp; Âm bồi</th><th>Tiếng Việt</th><th></th>
+      <th>Chủ đề</th><th>English &amp; Âm bồi</th><th>Tiếng Việt</th><th>中文 (pinyin)</th><th></th>
     </tr></thead><tbody id="sBody"></tbody></table></div>`;
   let curList=[];
   const draw=()=>{
     const tp=$("#sTopic").value, q=($("#sQ").value||"").toLowerCase();
     curList = SENTS.filter(s=>(!tp||s.topic===tp) && (!q||(s.en+" "+s.vi).toLowerCase().includes(q)));
     $("#sCount").textContent=`${curList.length} câu`;
-    $("#sBody").innerHTML = curList.slice(0,400).map(s=>`<tr>
+    $("#sBody").innerHTML = curList.slice(0,400).map((s,i)=>{ const tx=sentTxOf(s); return `<tr data-en="${esc(s.en)}">
       <td style="color:var(--muted);font-size:12px">${esc(s.topic)}</td>
       <td><div style="font-size:15px">${esc(s.en)}</div><div style="font-size:12px;color:var(--warn)">🗣️ ${esc(amBoiForSentence(s.en))}</div></td>
       <td style="color:var(--muted)">${esc(s.vi)}</td>
+      <td class="zhcell" style="font-size:13px">${tx.zh?`<span style="color:var(--accent)">${esc(tx.zh)}</span>${tx.pinyin?`<div class="sub">${esc(tx.pinyin)}</div>`:''} <button class="mini" onclick="speakZh('${escq(tx.zh)}')">🔊</button>`:`<button class="mini sTransOne" data-en="${esc(s.en)}">🀄 Dịch</button>`}</td>
       <td style="white-space:nowrap"><button class="mini" onclick="speak('${escq(s.en)}')">🔊</button>
         <button class="mini" onclick="speak('${escq(s.en)}',0.55)">🐢</button></td>
-    </tr>`).join("") + (curList.length>400?`<tr><td colspan="4" class="sub">Hiển thị 400/${curList.length} câu — lọc thêm để xem.</td></tr>`:"");
+    </tr>`; }).join("") + (curList.length>400?`<tr><td colspan="5" class="sub">Hiển thị 400/${curList.length} câu — lọc thêm để xem.</td></tr>`:"");
+    $$(".sTransOne").forEach(b=>b.onclick=async()=>{ b.textContent="…"; await translateSentExampleTable(b.dataset.en); draw(); });
   };
   $("#sTopic").onchange=e=>{sentTopic=e.target.value;draw();};
   $("#sQ").oninput=draw;
   $("#sPlay").onclick=()=>{
     if(!curList.length){ toast("Không có câu để đọc"); return; }
-    Seq.start(curList.map(s=>({en:s.en, vi:s.vi, ab:amBoiForSentence(s.en)})),
-      {sayVi:$("#sSayVi").checked, gap:700, loop:false});
+    const sayZh=$("#sSayZh").checked;
+    Seq.start(curList.map(s=>{ const tx=sentTxOf(s); return {en:s.en, vi:s.vi, zh:tx.zh, ab:amBoiForSentence(s.en)}; }),
+      {sayVi:$("#sSayVi").checked, sayZh, gap:700, loop:false});
+    if(sayZh && !hasZhVoice()) toast("⚠️ Chưa có giọng Trung — cài trong 📊 Thống kê.");
     toast(`▶ Đang đọc ${curList.length} câu`);
+  };
+  $("#sTransAll").onclick=async()=>{
+    const btn=$("#sTransAll"); const todo=curList.slice(0,400).filter(s=>!sentTxOf(s).zh);
+    if(!todo.length){ toast("Đã dịch hết trang"); return; }
+    btn.disabled=true; let n=0;
+    for(let i=0;i<todo.length;i+=4){
+      await Promise.all(todo.slice(i,i+4).map(async s=>{ await translateSentExampleTable(s.en); n++; btn.textContent=`Đang dịch ${n}/${todo.length}...`; }));
+      draw();
+    }
+    btn.disabled=false; btn.textContent="🀄 Dịch 中文 cả trang"; toast(`✓ Đã dịch ${n} câu`);
   };
   draw();
 };
+// Dịch 1 câu ví dụ (bảng Câu ví dụ) → cache exampleTx
+async function translateSentExampleTable(en){
+  if(progress.exampleTx[en] && progress.exampleTx[en].zh) return;
+  const r=await translateSentenceRich(en);
+  progress.exampleTx[en]={vi:r.vi, zh:r.zh, pinyin:r.pinyin}; save();
+}
 
 /* ---------- Tokenize English ---------- */
 const STOP = new Set(D.stopwords);
