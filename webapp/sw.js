@@ -1,10 +1,10 @@
 /* Service worker — offline cache cho app tiếng Anh
    App files: NETWORK-FIRST (luôn lấy bản mới khi online, fallback cache khi offline)
    CDN libs (OCR/PDF): CACHE-FIRST (offline sau lần đầu) */
-const CACHE = "en-app-v3";
+const CACHE = "en-app-v4";
 const CDN_CACHE = "en-cdn-v1";
 const ASSETS = [
-  "./", "./index.html", "./styles.css", "./app.js", "./appdata.js",
+  "./", "./index.html", "./styles.css", "./app.js", "./appdata.js", "./refs.js",
   "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"
 ];
 const CDN_HOSTS = ["cdn.jsdelivr.net", "unpkg.com", "tessdata.projectnaptha.com", "raw.githubusercontent.com"];

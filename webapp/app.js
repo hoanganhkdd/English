@@ -801,6 +801,7 @@ const PAGES = [
   {id:"roots",   ico:"🌱", name:"Gốc từ"},
   {id:"video",   ico:"🎬", name:"Nhập từ vựng"},
   {id:"sents",   ico:"📄", name:"Câu ví dụ", badge:SENTS.length},
+  {id:"refs",    ico:"📖", name:"Tài liệu tham khảo", badge:(window.APPREFS&&window.APPREFS.docs.length)||0},
   {id:"subtitle",ico:"📋", name:"Phụ đề → Phiên âm"},
   {id:"stats",   ico:"📊", name:"Thống kê"},
 ];
@@ -1536,6 +1537,69 @@ async function translateSentExampleTable(en){
   if(progress.exampleTx[en] && progress.exampleTx[en].zh) return;
   const r=await translateSentenceRich(en);
   progress.exampleTx[en]={vi:r.vi, zh:r.zh, pinyin:r.pinyin}; save();
+}
+
+/* ---------- Tài liệu tham khảo (từ kho kiến thức FB) ---------- */
+let refsFilter={q:"", group:""};
+RENDER.refs = () => {
+  const R = window.APPREFS || {groups:[], docs:[]};
+  const labelOf = k => (R.groups.find(g=>g.key===k)||{}).label || k;
+  $("#view").innerHTML = `
+    <h2 class="section-h">📖 Tài liệu tham khảo</h2>
+    <p class="sub">Kho ${R.docs.length} học liệu tiếng Anh (kênh nghe, podcast, shadowing, từ vựng, IELTS, tiếng Anh thương mại/XNK, công cụ AI…) — gom theo chủ đề. Bấm để xem tóm tắt &amp; mở nguồn gốc.</p>
+    <div class="toolbar">
+      <input class="txt" id="rfQ" style="flex:1;min-width:200px" placeholder="🔎 Tìm trong tài liệu (vd: podcast, từ vựng, logistics, IELTS...)" value="${esc(refsFilter.q)}">
+      <select id="rfGroup"><option value="">Tất cả chủ đề (${R.docs.length})</option>
+        ${R.groups.map(g=>`<option value="${esc(g.key)}" ${refsFilter.group===g.key?'selected':''}>${esc(g.label)} (${R.docs.filter(d=>d.group===g.key).length})</option>`).join("")}</select>
+    </div>
+    <div class="chips" style="margin-top:4px">
+      <span class="chip ${refsFilter.group===''?'active':''}" data-g="">Tất cả</span>
+      ${R.groups.map(g=>`<span class="chip ${refsFilter.group===g.key?'active':''}" data-g="${esc(g.key)}">${esc(g.label)}</span>`).join("")}
+    </div>
+    <div id="rfList" style="margin-top:12px"></div>`;
+  const draw=()=>{
+    const q=refsFilter.q.trim().toLowerCase();
+    let docs=R.docs.filter(d=>(!refsFilter.group||d.group===refsFilter.group)
+      && (!q||(d.title+" "+d.summary+" "+d.content+" "+d.source).toLowerCase().includes(q)));
+    if(!docs.length){ $("#rfList").innerHTML=`<p class="sub">Không tìm thấy tài liệu phù hợp.</p>`; return; }
+    // nhóm theo group, giữ thứ tự group trong R.groups
+    const byG={}; docs.forEach(d=>{(byG[d.group]=byG[d.group]||[]).push(d);});
+    $("#rfList").innerHTML = R.groups.filter(g=>byG[g.key]).map(g=>`
+      <details class="panel" open>
+        <summary style="cursor:pointer;font-weight:700;font-size:16px">${esc(g.label)} · ${byG[g.key].length}</summary>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+          ${byG[g.key].map(d=>refDocHTML(d)).join("")}
+        </div>
+      </details>`).join("");
+    $$(".rfDoc").forEach(c=>{
+      c.querySelector(".rfHead").onclick=()=>{ const b=c.querySelector(".rfBody"); b.classList.toggle("hidden"); };
+    });
+  };
+  $("#rfQ").oninput=e=>{refsFilter.q=e.target.value; draw();};
+  $("#rfGroup").onchange=e=>{refsFilter.group=e.target.value; RENDER.refs();};
+  $$(".chip[data-g]").forEach(c=>c.onclick=()=>{refsFilter.group=c.dataset.g; RENDER.refs();});
+  draw();
+};
+function refLinkBtns(d){
+  const b=[];
+  if(d.ext) b.push(`<a class="btn sm primary" href="${esc(d.ext)}" target="_blank" rel="noopener">🌐 Mở tài liệu</a>`);
+  if(d.src) b.push(`<a class="btn sm" href="${esc(d.src)}" target="_blank" rel="noopener">🔗 Bài gốc</a>`);
+  if(d.fb)  b.push(`<a class="btn sm" href="${esc(d.fb)}" target="_blank" rel="noopener">📘 Facebook</a>`);
+  return b.join(" ");
+}
+function refDocHTML(d){
+  const summ=(d.summary||d.content||"").slice(0,220);
+  return `<div class="vcard rfDoc" style="cursor:default;padding:14px">
+    <div class="rfHead" style="cursor:pointer">
+      <div style="font-weight:700;color:var(--brand);padding-right:0">${esc(d.title||"(không tiêu đề)")}</div>
+      <div class="sub" style="margin-top:4px">${esc(summ)}${summ.length>=220?'…':''}</div>
+      <div class="sub" style="margin-top:4px;font-size:11px">📌 ${esc(d.source||'')}${d.date?` · ${esc(d.date)}`:''} · <span style="color:var(--accent)">bấm để xem thêm</span></div>
+    </div>
+    <div class="rfBody hidden" style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px">
+      ${d.content?`<div style="white-space:pre-wrap;font-size:13.5px;line-height:1.6;max-height:280px;overflow:auto">${esc(d.content)}</div>`:''}
+      <div class="toolbar" style="margin-top:10px">${refLinkBtns(d)||'<span class="sub">Không có link.</span>'}</div>
+    </div>
+  </div>`;
 }
 
 /* ---------- Tokenize English ---------- */
