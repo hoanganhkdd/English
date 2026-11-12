@@ -1548,17 +1548,20 @@ async function translateSentExampleTable(en){
    LỘ TRÌNH HỌC + TRÌNH HỌC BÀI ĐỒNG BỘ (video · EN · VI · từ mới)
    ============================================================ */
 const _sleep = ms => new Promise(r=>setTimeout(r,ms));
-// Từ mới (có nghĩa) trong 1 câu
+// Nghĩa Việt của 1 từ (gloss → thư viện → cache dịch)
+const lessonWordViCache={};
+function wordViOf(w){
+  const lw=(w||"").toLowerCase();
+  if(lessonWordViCache[lw]) return lessonWordViCache[lw];
+  const g=D.gloss[lw]; if(g&&g.v) return g.v;
+  const fw=findWord(w); return (fw&&fw.vi)||"";
+}
+// Từ trong 1 câu (gồm cả từ MỚI chưa có nghĩa — để dịch & lưu khi học); từ chưa thuộc xếp trước
 function lessonVocab(en){
   const toks=[...new Set(tokenizeEn(en))].filter(w=>w.length>3 && !STOP.has(w));
-  const out=[];
-  for(const w of toks){
-    const g=D.gloss[w]; let vi=g?g.v:"";
-    if(!vi){ const fw=findWord(w); if(fw&&fw.vi) vi=fw.vi; }
-    if(vi) out.push({w, vi});
-    if(out.length>=8) break;
-  }
-  return out;
+  const items=toks.map(w=>({w, vi:wordViOf(w)}));
+  items.sort((a,b)=>(isKnown(a.w)?1:0)-(isKnown(b.w)?1:0));
+  return items.slice(0,8);
 }
 function lessonLine(en, vi){ return {en, vi:vi||"", words:lessonVocab(en)}; }
 // Danh sách bài học sẵn có (theo chủ đề) + bài tự tạo
@@ -1614,26 +1617,38 @@ function lessonHighlight(i){
   const vb=$("#lsVocab");
   if(vb && ln){
     vb.innerHTML = ln.words.length
-      ? ln.words.map(w=>`<div class="ls-vocab-item"><b>${esc(w.w)}</b> <span style="color:var(--warn)">🗣️ ${esc(amBoiForWord(w.w))}</span><div class="sub">${esc(w.vi)}</div></div>`).join("")
-      : `<div class="sub">(câu này không có từ mới)</div>`;
+      ? ln.words.map(w=>lessonVocabItemHTML(w.w)).join("")
+      : `<div class="sub">(câu này không có từ)</div>`;
   }
   const pos=$("#lsPos"); if(pos && LessonPlay.L) pos.textContent=`${i+1}/${LessonPlay.L.lines.length}`;
 }
+let lessonSource="🎬 Video";
+function lessonVocabItemHTML(w){
+  const vi=wordViOf(w); const saved=isKnown(w);
+  return `<div class="ls-vocab-item">
+    <div><b>${esc(w)}</b> <span class="sub" style="color:var(--warn)">🗣️ ${esc(amBoiForWord(w))}</span>
+      <span class="audio-btn" onclick="speak('${escq(w)}')">🔊</span></div>
+    <div class="sub">${vi?esc(vi):`<button class="mini" onclick="transLessonWord('${escq(w)}')">🌐 Dịch nghĩa</button>`}</div>
+    <button class="mini" style="margin-top:3px;${saved?'':'border-color:var(--ok)'}" ${saved?'disabled':''} onclick="saveLessonWord('${escq(w)}')">${saved?'✓ Đã lưu':'➕ Lưu từ'}</button>
+  </div>`;
+}
+window.transLessonWord=async function(w){
+  toast("Đang dịch...");
+  const r=await translateRich(w);
+  lessonWordViCache[w.toLowerCase()]=r.vi||"";
+  if($("#lsVocab")) lessonHighlight(LessonPlay.idx||0);
+};
+window.saveLessonWord=function(w){
+  if(isKnown(w)){ toast("Từ đã có trong thư viện"); return; }
+  const vi=wordViOf(w);
+  const ok=addMyWord({word:w, ipa:ipaSlashed(w)||"", vi, source:lessonSource});
+  toast(ok?`➕ Đã lưu "${w}" vào thư viện`:"Không lưu được");
+  if($("#lsVocab")) lessonHighlight(LessonPlay.idx||0);
+};
 
-let currentLessonId=null, currentDayNum=null;
-function openLesson(id, dayNum){
-  const L=getLesson(id);
-  if(!L){ toast("Không tìm thấy bài học"); return; }
-  currentLessonId=id; currentDayNum=dayNum||null; LessonPlay.stop();
-  const ytEmbed = L.yt ? `<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:12px">
-      <iframe src="https://www.youtube.com/embed/${esc(L.yt)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe></div>` : "";
-  $("#view").innerHTML=`
-    <div class="toolbar" style="margin-bottom:6px">
-      <button class="btn sm" id="lsBack">← Lộ trình</button>
-      <h2 class="section-h" style="margin:0">${esc(L.thumb)} ${esc(L.title)}</h2>
-    </div>
-    <p class="sub">${dayNum?`Ngày ${dayNum} · `:""}${L.lines.length} câu · Video chạy đến đâu, câu &amp; từ mới highlight đến đó.</p>
-    ${ytEmbed}
+// Thân bài học (điều khiển + 3 cột) — dùng chung cho Lộ trình & Thư viện video
+function lessonBodyHTML(L){
+  return `
     <div class="panel" style="position:sticky;top:0;z-index:5">
       <div class="toolbar" style="justify-content:center">
         <button class="btn primary" id="lsPlay">▶ Học đồng bộ</button>
@@ -1648,21 +1663,41 @@ function openLesson(id, dayNum){
     <div class="ls-grid">
       <div class="panel ls-col"><h3>📜 English</h3><div id="lsEnList" class="ls-list"></div></div>
       <div class="panel ls-col"><h3>🇻🇳 Tiếng Việt</h3><div id="lsViList" class="ls-list"></div></div>
-      <div class="panel ls-col"><h3>📚 Từ mới (câu hiện tại)</h3><div id="lsVocab" class="ls-list"><div class="sub">Bấm ▶ để bắt đầu.</div></div></div>
-    </div>
-    <div class="toolbar" style="justify-content:center;margin-top:12px">
-      <button class="btn primary" id="lsDone">✓ Hoàn thành ${dayNum?`ngày ${dayNum}`:"bài"}</button>
+      <div class="panel ls-col"><h3>📚 Từ mới — 🌐 dịch &amp; ➕ lưu</h3><div id="lsVocab" class="ls-list"><div class="sub">Bấm ▶ để bắt đầu; chạy tới câu nào hiện từ câu đó.</div></div></div>
     </div>`;
+}
+function wireLessonBody(L){
   $("#lsEnList").innerHTML=L.lines.map((ln,i)=>`<div class="ls-line" id="lnEn-${i}" data-i="${i}">${esc(ln.en)}<div class="ls-ab">🗣️ ${esc(amBoiForSentence(ln.en))}</div></div>`).join("");
   $("#lsViList").innerHTML=L.lines.map((ln,i)=>`<div class="ls-line" id="lnVi-${i}" data-i="${i}">${esc(ln.vi||"—")}</div>`).join("");
   const playFrom=(i)=>{ LessonPlay.start(L, i, {sayVi:$("#lsVi").checked, rate:parseFloat($("#lsRate").value), loop:$("#lsLoop").checked}); $("#lsPlay").textContent="⏸ Dừng"; };
-  $("#lsBack").onclick=()=>{ LessonPlay.stop(); RENDER.roadmap(); };
   $("#lsPlay").onclick=()=>{ if(!LessonPlay.playing) playFrom(LessonPlay.idx||0); else LessonPlay.togglePause(); };
   $("#lsPrev").onclick=()=>LessonPlay.seek((LessonPlay.idx||0)-1);
   $("#lsNext").onclick=()=>LessonPlay.seek((LessonPlay.idx||0)+1);
   $$("#lsEnList .ls-line, #lsViList .ls-line").forEach(el=>el.onclick=()=>{ LessonPlay.L=L; LessonPlay.seek(+el.dataset.i); if(!LessonPlay.playing) playFrom(+el.dataset.i); });
+  LessonPlay.L=L; lessonHighlight(0);
+}
+let currentLessonId=null, currentDayNum=null;
+function openLesson(id, dayNum){
+  const L=getLesson(id);
+  if(!L){ toast("Không tìm thấy bài học"); return; }
+  currentLessonId=id; currentDayNum=dayNum||null; LessonPlay.stop();
+  lessonSource="🎬 "+(L.title||"Bài học").slice(0,30);
+  const ytEmbed = L.yt ? `<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <iframe src="https://www.youtube.com/embed/${esc(L.yt)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe></div>` : "";
+  $("#view").innerHTML=`
+    <div class="toolbar" style="margin-bottom:6px">
+      <button class="btn sm" id="lsBack">← Lộ trình</button>
+      <h2 class="section-h" style="margin:0">${esc(L.thumb)} ${esc(L.title)}</h2>
+    </div>
+    <p class="sub">${dayNum?`Ngày ${dayNum} · `:""}${L.lines.length} câu · Video chạy đến đâu, câu &amp; từ mới highlight đến đó.</p>
+    ${ytEmbed}
+    ${lessonBodyHTML(L)}
+    <div class="toolbar" style="justify-content:center;margin-top:12px">
+      <button class="btn primary" id="lsDone">✓ Hoàn thành ${dayNum?`ngày ${dayNum}`:"bài"}</button>
+    </div>`;
+  wireLessonBody(L);
+  $("#lsBack").onclick=()=>{ LessonPlay.stop(); RENDER.roadmap(); };
   $("#lsDone").onclick=()=>{ LessonPlay.stop(); if(dayNum) markRoadmapDay(dayNum); toast("✅ Đã hoàn thành!"); RENDER.roadmap(); };
-  lessonHighlight(0);
 }
 
 /* ---------- Lộ trình học ---------- */
@@ -1839,53 +1874,59 @@ function vlCardHTML(v){
   </div>`;
 }
 let currentVideoId=null;
+function videoLessonId(id){ return "custom:vid-"+id; }
 function openVideo(id){
   const V=window.APPVIDEOS; const v=V.videos.find(x=>x.id===id); if(!v){ toast("Không tìm thấy video"); return; }
   const ch=V.channels.find(c=>c.key===v.ch)||{name:""};
   currentVideoId=id; LessonPlay.stop();
   const done=videoStudied(id);
+  const L=getLesson(videoLessonId(id));   // bài học đồng bộ (nếu đã dán transcript)
+  lessonSource="🎬 "+(v.title||"Video").slice(0,30);
   $("#view").innerHTML=`
     <div class="toolbar" style="margin-bottom:6px">
       <button class="btn sm" id="vBack">← Thư viện</button>
       <h2 class="section-h" style="margin:0;font-size:18px">${esc(v.title)}</h2>
     </div>
-    <p class="sub">📺 ${esc(ch.name)} · Xem video, rồi bấm “Đã học”. Muốn học sâu: dán transcript để tạo bài đồng bộ (highlight câu + từ mới).</p>
-    <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:12px">
+    <p class="sub">📺 ${esc(ch.name)} · Xem video, dán phụ đề để hiện <b>English · Tiếng Việt · Từ mới</b> ngay dưới đây — dịch &amp; lưu từ mới khi đang học.</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:10px">
       <iframe id="vFrame" src="https://www.youtube.com/embed/${esc(id)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe>
     </div>
-    <div class="toolbar" style="justify-content:center">
+    <div class="toolbar" style="justify-content:center;margin-bottom:8px">
       <button class="btn ${done?'':'primary'}" id="vStudied">${done?'✓ Đã học (bấm để bỏ)':'✓ Đánh dấu đã học'}</button>
       <a class="btn sm" href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener">▶ Mở trên YouTube</a>
+      ${L?`<button class="btn sm" id="vReTrans">✏️ Sửa phụ đề</button>`:""}
     </div>
-    <details class="panel" style="margin-top:12px">
-      <summary style="cursor:pointer;font-weight:700">📝 Tạo bài học đồng bộ từ video này (dán transcript / lời thoại)</summary>
-      <div style="margin-top:10px">
-        <p class="sub">Trên YouTube: bấm <b>“...more → Show transcript”</b>, copy lời thoại, dán vào đây → app tách câu, tự dịch nghĩa Việt &amp; trích từ mới → học đồng bộ (đọc tới đâu highlight tới đó).</p>
-        <textarea class="ta" id="vTrans" placeholder="Dán transcript tiếng Anh..."></textarea>
+    ${L ? `<div id="vSubArea">${lessonBodyHTML(L)}</div>`
+        : `<div class="panel" id="vBuild">
+        <h3>📝 Dán phụ đề để hiện English · Tiếng Việt · Từ mới</h3>
+        <p class="sub">Trên YouTube: bấm <b>“...more → Show transcript”</b> (hoặc nút phụ đề), copy lời thoại rồi dán vào đây. App tách câu, tự dịch tiếng Việt &amp; trích từ mới → phụ đề 3 cột hiện ngay dưới video.</p>
+        <textarea class="ta" id="vTrans" placeholder="Dán phụ đề / lời thoại tiếng Anh..."></textarea>
         <div class="toolbar" style="margin-top:8px">
           <label class="sub">🌐 Tự dịch nghĩa Việt <input type="checkbox" id="vTransVi" checked></label>
-          <button class="btn primary" id="vMakeLesson">Tạo &amp; học đồng bộ</button>
+          <button class="btn primary" id="vMakeLesson">Hiện phụ đề</button>
           <span class="sub" id="vMsg"></span>
         </div>
-      </div>
-    </details>`;
-  $("#vBack").onclick=()=>RENDER.videolib();
+      </div>`}`;
+  $("#vBack").onclick=()=>{ LessonPlay.stop(); RENDER.videolib(); };
   $("#vStudied").onclick=()=>{ setStudied(id, !videoStudied(id)); openVideo(id); };
-  $("#vMakeLesson").onclick=async ()=>{
+  if(L){ wireLessonBody(L); }
+  if($("#vReTrans")) $("#vReTrans").onclick=()=>{
+    if(confirm("Xóa phụ đề hiện tại để dán lại?")){ progress.customLessons=progress.customLessons.filter(l=>l.id!==videoLessonId(id)); save(); openVideo(id); }
+  };
+  if($("#vMakeLesson")) $("#vMakeLesson").onclick=async ()=>{
     const text=$("#vTrans").value.trim();
-    if(!text){ toast("Dán transcript trước"); return; }
+    if(!text){ toast("Dán phụ đề trước"); return; }
     const sents=splitSentences(text); if(!sents.length){ toast("Không tách được câu"); return; }
     const lines=sents.map(en=>lessonLine(en,""));
     if($("#vTransVi").checked){
-      const msg=$("#vMsg"); let done2=0;
+      const msg=$("#vMsg"); let done2=0; $("#vMakeLesson").disabled=true;
       for(let i=0;i<lines.length;i+=4){ await Promise.all(lines.slice(i,i+4).map(async ln=>{ const t=await translateWord(ln.en); if(t)ln.vi=t; done2++; msg.textContent=`Đang dịch ${done2}/${lines.length}...`; })); }
-      msg.textContent="✓ Xong";
     }
-    const lesson={id:"custom:vid-"+id, title:v.title.slice(0,60), thumb:"🎬", yt:id, lines};
+    const lesson={id:videoLessonId(id), title:v.title.slice(0,60), thumb:"🎬", yt:id, lines};
     progress.customLessons=progress.customLessons.filter(l=>l.id!==lesson.id);
     progress.customLessons.push(lesson); setStudied(id,true); save();
-    toast("✅ Đã tạo bài học đồng bộ");
-    openLesson(lesson.id);
+    toast("✅ Phụ đề đã sẵn sàng — bấm ▶ Học đồng bộ");
+    openVideo(id);  // hiện phụ đề inline ngay dưới video
   };
 }
 
