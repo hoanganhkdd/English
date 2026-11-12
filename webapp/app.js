@@ -23,6 +23,8 @@ progress.playCount = progress.playCount || {};     // word(lowercase) -> số l�
 progress.plan = progress.plan || {};               // {date, wordsDone, sentsDone}
 progress.dailyList = progress.dailyList || {};     // {date, words:[...], sents:[...]}
 progress.exampleTx = progress.exampleTx || {};     // câu ví dụ -> {vi, zh, pinyin} (cache dịch)
+progress.roadmap = progress.roadmap || null;       // {start, days, perDay, pool, lessons:[id...], done:{dayNum:true}}
+progress.customLessons = progress.customLessons || []; // bài học tự tạo: [{id,title,thumb,yt,lines:[{en,vi,words}]}]
 function save(){ localStorage.setItem(STORE, JSON.stringify(progress)); }
 function todayKey(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function logActivity(type, n=1){
@@ -790,6 +792,7 @@ function toast(msg){
 /* ---------- Navigation ---------- */
 const PAGES = [
   {id:"home",    ico:"🏠", name:"Tổng quan"},
+  {id:"roadmap", ico:"📅", name:"Lộ trình học"},
   {id:"srs",     ico:"🧠", name:"Ôn tập ghi nhớ"},
   {id:"sentsrs", ico:"📖", name:"Ôn câu ví dụ"},
   {id:"listen",  ico:"🎧", name:"Luyện nghe"},
@@ -1537,6 +1540,245 @@ async function translateSentExampleTable(en){
   if(progress.exampleTx[en] && progress.exampleTx[en].zh) return;
   const r=await translateSentenceRich(en);
   progress.exampleTx[en]={vi:r.vi, zh:r.zh, pinyin:r.pinyin}; save();
+}
+
+/* ============================================================
+   LỘ TRÌNH HỌC + TRÌNH HỌC BÀI ĐỒNG BỘ (video · EN · VI · từ mới)
+   ============================================================ */
+const _sleep = ms => new Promise(r=>setTimeout(r,ms));
+// Từ mới (có nghĩa) trong 1 câu
+function lessonVocab(en){
+  const toks=[...new Set(tokenizeEn(en))].filter(w=>w.length>3 && !STOP.has(w));
+  const out=[];
+  for(const w of toks){
+    const g=D.gloss[w]; let vi=g?g.v:"";
+    if(!vi){ const fw=findWord(w); if(fw&&fw.vi) vi=fw.vi; }
+    if(vi) out.push({w, vi});
+    if(out.length>=8) break;
+  }
+  return out;
+}
+function lessonLine(en, vi){ return {en, vi:vi||"", words:lessonVocab(en)}; }
+// Danh sách bài học sẵn có (theo chủ đề) + bài tự tạo
+function topicLessonMeta(){
+  const m={};
+  SENTS.forEach(s=>{ if(!s.topic) return; (m[s.topic]=m[s.topic]||[]).push(s); });
+  return Object.entries(m).map(([tp,arr])=>({id:"topic:"+tp, title:tp.replace(/^[^\p{L}\d]+/u,"").trim()||tp, thumb:(tp.match(/^\s*(\p{Emoji_Presentation}|\p{Extended_Pictographic})/u)||["📘"])[0]||"📘", count:arr.length}));
+}
+function allLessonMeta(){
+  const custom=(progress.customLessons||[]).map(l=>({id:l.id, title:l.title, thumb:l.thumb||"🎬", count:l.lines.length, custom:true}));
+  return custom.concat(topicLessonMeta());
+}
+function getLesson(id){
+  if(id&&id.startsWith("topic:")){
+    const tp=id.slice(6); const arr=SENTS.filter(s=>s.topic===tp).slice(0,30);
+    const meta=topicLessonMeta().find(x=>x.id===id)||{title:tp,thumb:"📘"};
+    return {id, title:meta.title, thumb:meta.thumb, yt:"", level:"", lines:arr.map(s=>lessonLine(s.en,s.vi))};
+  }
+  return (progress.customLessons||[]).find(l=>l.id===id)||null;
+}
+
+/* ---------- Trình phát bài học đồng bộ (dùng TTS để highlight chính xác) ---------- */
+const LessonPlay={
+  L:null, idx:0, playing:false, paused:false, token:0, opts:{},
+  start(L, from=0, opts={}){
+    this.stop(); this.L=L; this.idx=from||0;
+    this.opts=Object.assign({sayVi:true, rate:0.9, gap:350, loop:false}, opts);
+    this.playing=true; this.paused=false; this.token++; acquireWake(); this._run(this.token);
+  },
+  async _run(tok){
+    while(this.playing && tok===this.token){
+      if(this.paused){ await _sleep(150); continue; }
+      if(this.idx>=this.L.lines.length){ if(this.opts.loop){this.idx=0;} else { this._finish(); break; } }
+      const ln=this.L.lines[this.idx]; lessonHighlight(this.idx);
+      const viFirst=progress.settings.viFirst!==false;
+      if(viFirst && this.opts.sayVi && ln.vi){ await speakP(ln.vi,{lang:"vi-VN"}); if(!this.playing||tok!==this.token)break; await _sleep(110); }
+      await speakP(ln.en,{lang:"en-US", rate:this.opts.rate}); if(!this.playing||tok!==this.token)break;
+      if(!viFirst && this.opts.sayVi && ln.vi){ await _sleep(110); await speakP(ln.vi,{lang:"vi-VN"}); if(!this.playing||tok!==this.token)break; }
+      await _sleep(this.opts.gap); if(this.paused) continue; this.idx++;
+    }
+  },
+  _finish(){ this.playing=false; this.token++; releaseWake(); const b=$("#lsPlay"); if(b)b.textContent="▶ Học lại"; logActivity("sent", (this.L&&this.L.lines.length)||0); save(); toast("✅ Hết bài! Bấm Hoàn thành để đánh dấu."); },
+  seek(i){ speechSynthesis.cancel(); this.idx=Math.max(0,Math.min(i,this.L.lines.length-1)); this.token++; if(this.playing){this.paused=false; this._run(this.token);} else lessonHighlight(this.idx); },
+  togglePause(){ this.paused=!this.paused; if(this.paused) speechSynthesis.cancel(); const b=$("#lsPlay"); if(b)b.textContent=this.paused?"▶ Tiếp":"⏸ Dừng"; },
+  stop(){ this.playing=false; this.paused=false; this.token++; speechSynthesis.cancel(); releaseWake(); },
+};
+function lessonHighlight(i){
+  $$(".ls-line.cur").forEach(e=>e.classList.remove("cur"));
+  const en=$("#lnEn-"+i), vi=$("#lnVi-"+i);
+  if(en){ en.classList.add("cur"); en.scrollIntoView({block:"center",behavior:"smooth"}); }
+  if(vi){ vi.classList.add("cur"); vi.scrollIntoView({block:"center",behavior:"smooth"}); }
+  const ln=LessonPlay.L&&LessonPlay.L.lines[i];
+  const vb=$("#lsVocab");
+  if(vb && ln){
+    vb.innerHTML = ln.words.length
+      ? ln.words.map(w=>`<div class="ls-vocab-item"><b>${esc(w.w)}</b> <span style="color:var(--warn)">🗣️ ${esc(amBoiForWord(w.w))}</span><div class="sub">${esc(w.vi)}</div></div>`).join("")
+      : `<div class="sub">(câu này không có từ mới)</div>`;
+  }
+  const pos=$("#lsPos"); if(pos && LessonPlay.L) pos.textContent=`${i+1}/${LessonPlay.L.lines.length}`;
+}
+
+let currentLessonId=null, currentDayNum=null;
+function openLesson(id, dayNum){
+  const L=getLesson(id);
+  if(!L){ toast("Không tìm thấy bài học"); return; }
+  currentLessonId=id; currentDayNum=dayNum||null; LessonPlay.stop();
+  const ytEmbed = L.yt ? `<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <iframe src="https://www.youtube.com/embed/${esc(L.yt)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe></div>` : "";
+  $("#view").innerHTML=`
+    <div class="toolbar" style="margin-bottom:6px">
+      <button class="btn sm" id="lsBack">← Lộ trình</button>
+      <h2 class="section-h" style="margin:0">${esc(L.thumb)} ${esc(L.title)}</h2>
+    </div>
+    <p class="sub">${dayNum?`Ngày ${dayNum} · `:""}${L.lines.length} câu · Video chạy đến đâu, câu &amp; từ mới highlight đến đó.</p>
+    ${ytEmbed}
+    <div class="panel" style="position:sticky;top:0;z-index:5">
+      <div class="toolbar" style="justify-content:center">
+        <button class="btn primary" id="lsPlay">▶ Học đồng bộ</button>
+        <button class="btn sm" id="lsPrev">⏮</button>
+        <button class="btn sm" id="lsNext">⏭</button>
+        <label class="sub">🇻🇳<input type="checkbox" id="lsVi" checked></label>
+        <label class="sub">🐢<input type="range" id="lsRate" min="0.5" max="1" step="0.05" value="0.9" style="width:80px"></label>
+        <label class="sub">🔁<input type="checkbox" id="lsLoop"></label>
+        <span class="count-pill">Câu <b id="lsPos">0/${L.lines.length}</b></span>
+      </div>
+    </div>
+    <div class="ls-grid">
+      <div class="panel ls-col"><h3>📜 English</h3><div id="lsEnList" class="ls-list"></div></div>
+      <div class="panel ls-col"><h3>🇻🇳 Tiếng Việt</h3><div id="lsViList" class="ls-list"></div></div>
+      <div class="panel ls-col"><h3>📚 Từ mới (câu hiện tại)</h3><div id="lsVocab" class="ls-list"><div class="sub">Bấm ▶ để bắt đầu.</div></div></div>
+    </div>
+    <div class="toolbar" style="justify-content:center;margin-top:12px">
+      <button class="btn primary" id="lsDone">✓ Hoàn thành ${dayNum?`ngày ${dayNum}`:"bài"}</button>
+    </div>`;
+  $("#lsEnList").innerHTML=L.lines.map((ln,i)=>`<div class="ls-line" id="lnEn-${i}" data-i="${i}">${esc(ln.en)}<div class="ls-ab">🗣️ ${esc(amBoiForSentence(ln.en))}</div></div>`).join("");
+  $("#lsViList").innerHTML=L.lines.map((ln,i)=>`<div class="ls-line" id="lnVi-${i}" data-i="${i}">${esc(ln.vi||"—")}</div>`).join("");
+  const playFrom=(i)=>{ LessonPlay.start(L, i, {sayVi:$("#lsVi").checked, rate:parseFloat($("#lsRate").value), loop:$("#lsLoop").checked}); $("#lsPlay").textContent="⏸ Dừng"; };
+  $("#lsBack").onclick=()=>{ LessonPlay.stop(); RENDER.roadmap(); };
+  $("#lsPlay").onclick=()=>{ if(!LessonPlay.playing) playFrom(LessonPlay.idx||0); else LessonPlay.togglePause(); };
+  $("#lsPrev").onclick=()=>LessonPlay.seek((LessonPlay.idx||0)-1);
+  $("#lsNext").onclick=()=>LessonPlay.seek((LessonPlay.idx||0)+1);
+  $$("#lsEnList .ls-line, #lsViList .ls-line").forEach(el=>el.onclick=()=>{ LessonPlay.L=L; LessonPlay.seek(+el.dataset.i); if(!LessonPlay.playing) playFrom(+el.dataset.i); });
+  $("#lsDone").onclick=()=>{ LessonPlay.stop(); if(dayNum) markRoadmapDay(dayNum); toast("✅ Đã hoàn thành!"); RENDER.roadmap(); };
+  lessonHighlight(0);
+}
+
+/* ---------- Lộ trình học ---------- */
+function markRoadmapDay(n){ if(!progress.roadmap) return; progress.roadmap.done[n]=true; save(); }
+function roadmapDayDate(n){ const d=new Date(progress.roadmap.start+"T00:00:00"); d.setDate(d.getDate()+(n-1)); return d; }
+RENDER.roadmap = () => {
+  const rm=progress.roadmap;
+  if(!rm){ return roadmapSetup(); }
+  const doneN=Object.keys(rm.done).length;
+  const todayStr=todayKey();
+  $("#view").innerHTML=`
+    <h2 class="section-h">📅 Lộ trình học của bạn</h2>
+    <p class="sub">${rm.days} ngày · ${rm.perDay} phút/ngày · bắt đầu ${rm.start}. Mỗi ngày một bài — bấm để học đồng bộ.</p>
+    <div class="panel" style="background:linear-gradient(135deg,var(--brand),var(--accent));color:#fff;border:none">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div><div style="font-size:13px;opacity:.85">Đã hoàn thành</div>
+          <div style="font-size:40px;font-weight:800;line-height:1">${doneN}/${rm.days} ngày</div></div>
+        <div style="flex:1;min-width:140px"><div class="progress-bar" style="background:rgba(255,255,255,.3)"><i style="width:${doneN/rm.days*100}%;background:#fff"></i></div></div>
+        <button class="btn" id="rmReset" style="background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.4)">↻ Làm lại</button>
+      </div>
+    </div>
+    <div class="roadmap-grid" id="rmGrid"></div>`;
+  $("#rmReset").onclick=()=>{ if(confirm("Tạo lại lộ trình mới? (giữ tiến độ học từ vựng)")){ progress.roadmap=null; save(); RENDER.roadmap(); } };
+  $("#rmGrid").innerHTML=rm.lessons.map((id,i)=>{
+    const n=i+1, meta=allLessonMeta().find(m=>m.id===id)||getLesson(id)||{title:"(bài đã xóa)",thumb:"❔"};
+    const done=rm.done[n]; const dt=roadmapDayDate(n); const isToday=fmtDay(dt)===todayStr;
+    return `<div class="rm-card ${done?'done':''} ${isToday?'today':''}" data-day="${n}" data-id="${esc(id)}">
+      <div class="rm-thumb">${esc(meta.thumb||"📘")}</div>
+      <div class="rm-day">Ngày ${n}${done?' ✓':''}</div>
+      <div class="rm-title">${esc(meta.title||"")}</div>
+      <div class="rm-date">${dt.getDate()}/${dt.getMonth()+1}${isToday?' · hôm nay':''}</div>
+    </div>`;
+  }).join("");
+  $$(".rm-card").forEach(c=>c.onclick=()=>openLesson(c.dataset.id, +c.dataset.day));
+};
+function roadmapSetup(){
+  const metas=allLessonMeta();
+  const levels=[...new Set(D.vocab.map(v=>v.level))];
+  $("#view").innerHTML=`
+    <h2 class="section-h">📅 Tạo lộ trình học</h2>
+    <p class="sub">Tự đặt thời gian — app sẽ xếp lịch Ngày 1, 2, 3… mỗi ngày một bài học (video + câu + từ mới), chạy đồng bộ highlight.</p>
+    <div class="panel center-narrow">
+      <div class="toolbar" style="justify-content:center">
+        <label class="sub">📆 Bắt đầu <input class="txt" id="rsStart" type="date" value="${todayKey()}"></label>
+        <label class="sub">⏳ Số ngày
+          <select id="rsDays"><option>7</option><option>14</option><option>21</option><option selected>28</option><option>60</option></select></label>
+        <label class="sub">⏱ Phút/ngày
+          <select id="rsMin"><option>10</option><option selected>15</option><option>20</option><option>30</option></select></label>
+      </div>
+      <div class="toolbar" style="justify-content:center">
+        <label class="sub">📚 Nội dung
+          <select id="rsPool">
+            <option value="all">Tất cả chủ đề (${metas.length} bài)</option>
+            ${progress.customLessons.length?`<option value="custom">Chỉ bài tự tạo (${progress.customLessons.length})</option>`:""}
+          </select></label>
+        <button class="btn primary" id="rsGo">🚀 Tạo lộ trình</button>
+      </div>
+      <p class="sub" style="text-align:center">Mẫu như ảnh bạn gửi: mỗi ngày một “bìa sách/video”, bấm vào để học.</p>
+    </div>
+    <details class="panel">
+      <summary style="cursor:pointer;font-weight:700">➕ Tạo bài học riêng (dán transcript/đoạn văn tiếng Anh)</summary>
+      <div style="margin-top:10px">
+        <div class="toolbar">
+          <input class="txt" id="clTitle" style="flex:1;min-width:160px" placeholder="Tên bài (vd: The Old Man and the Sea - Ch.1)">
+          <input class="txt" id="clYt" style="flex:1;min-width:160px" placeholder="🔗 Link YouTube (tuỳ chọn, để xem)">
+        </div>
+        <textarea class="ta" id="clText" placeholder="Dán đoạn văn / transcript tiếng Anh (mỗi câu sẽ thành 1 dòng)..."></textarea>
+        <div class="toolbar" style="margin-top:8px">
+          <label class="sub">🌐 Tự dịch nghĩa Việt <input type="checkbox" id="clTrans" checked></label>
+          <button class="btn primary" id="clMake">Tạo bài học</button>
+          <span class="sub" id="clMsg"></span>
+        </div>
+        <div id="clList" style="margin-top:8px"></div>
+      </div>
+    </details>`;
+  $("#rsGo").onclick=()=>{
+    const start=$("#rsStart").value||todayKey();
+    const days=parseInt($("#rsDays").value)||28;
+    const perDay=parseInt($("#rsMin").value)||15;
+    const pool=$("#rsPool").value;
+    let ids=(pool==="custom"?progress.customLessons.map(l=>l.id):allLessonMeta().map(m=>m.id));
+    if(!ids.length){ toast("Chưa có bài học nào"); return; }
+    const lessons=[]; for(let i=0;i<days;i++) lessons.push(ids[i%ids.length]);
+    progress.roadmap={start, days, perDay, pool, lessons, done:{}}; save();
+    toast(`🚀 Đã tạo lộ trình ${days} ngày!`); RENDER.roadmap();
+  };
+  let removeFuncCL=true;
+  $("#clMake").onclick=async ()=>{
+    const text=$("#clText").value.trim();
+    if(!text){ toast("Dán đoạn văn trước"); return; }
+    const title=($("#clTitle").value||"").trim()||"Bài học "+(progress.customLessons.length+1);
+    const yt=ytId($("#clYt").value)||"";
+    const sents=splitSentences(text);
+    if(!sents.length){ toast("Không tách được câu"); return; }
+    const lines=sents.map(en=>lessonLine(en,""));
+    const lesson={id:"custom:"+Date.now(), title, thumb:"🎬", yt, lines};
+    if($("#clTrans").checked){
+      const msg=$("#clMsg"); msg.textContent="Đang dịch nghĩa (cần mạng)...";
+      let done=0;
+      for(let i=0;i<lines.length;i+=4){
+        await Promise.all(lines.slice(i,i+4).map(async ln=>{ const v=await translateWord(ln.en); if(v) ln.vi=v; done++; msg.textContent=`Đang dịch ${done}/${lines.length}...`; }));
+      }
+      msg.textContent=`✓ Xong ${lines.length} câu`;
+    }
+    progress.customLessons.push(lesson); save();
+    toast(`✅ Đã tạo bài "${title}" (${lines.length} câu)`);
+    drawCustomList();
+  };
+  const drawCustomList=()=>{
+    const el=$("#clList"); if(!el) return;
+    if(!progress.customLessons.length){ el.innerHTML=""; return; }
+    el.innerHTML=`<div class="sub" style="margin-bottom:4px">Bài tự tạo:</div>`+progress.customLessons.map(l=>
+      `<div class="toolbar" style="justify-content:space-between"><span>🎬 ${esc(l.title)} (${l.lines.length} câu)</span>
+       <span><button class="btn sm" onclick="openLesson('${escq(l.id)}')">Học thử</button>
+       <button class="btn sm clDel" data-id="${esc(l.id)}" style="border-color:var(--brand)">Xóa</button></span></div>`).join("");
+    $$(".clDel").forEach(b=>b.onclick=()=>{ progress.customLessons=progress.customLessons.filter(x=>x.id!==b.dataset.id); save(); drawCustomList(); });
+  };
+  drawCustomList();
 }
 
 /* ---------- Tài liệu tham khảo (từ kho kiến thức FB) ---------- */
@@ -2591,4 +2833,4 @@ initTheme();
 buildNav();
 scheduleReminder();
 go(location.hash.slice(1) && PAGES.some(p=>p.id===location.hash.slice(1)) ? location.hash.slice(1) : "home");
-window.closeModal=closeModal; window.speak=speak; window.toggleLearned=toggleLearned; window.toast=toast; window.RENDER=RENDER; window.openYouglish=openYouglish;
+window.closeModal=closeModal; window.speak=speak; window.toggleLearned=toggleLearned; window.toast=toast; window.RENDER=RENDER; window.openYouglish=openYouglish; window.openLesson=openLesson; window.speakZh=speakZh;
