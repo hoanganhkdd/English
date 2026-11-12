@@ -25,6 +25,7 @@ progress.dailyList = progress.dailyList || {};     // {date, words:[...], sents:
 progress.exampleTx = progress.exampleTx || {};     // câu ví dụ -> {vi, zh, pinyin} (cache dịch)
 progress.roadmap = progress.roadmap || null;       // {start, days, perDay, pool, lessons:[id...], done:{dayNum:true}}
 progress.customLessons = progress.customLessons || []; // bài học tự tạo: [{id,title,thumb,yt,lines:[{en,vi,words}]}]
+progress.studiedVideos = progress.studiedVideos || {}; // videoId -> {at} (video đã học)
 function save(){ localStorage.setItem(STORE, JSON.stringify(progress)); }
 function todayKey(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function logActivity(type, n=1){
@@ -793,6 +794,7 @@ function toast(msg){
 const PAGES = [
   {id:"home",    ico:"🏠", name:"Tổng quan"},
   {id:"roadmap", ico:"📅", name:"Lộ trình học"},
+  {id:"videolib",ico:"📺", name:"Thư viện video", badge:(window.APPVIDEOS&&window.APPVIDEOS.videos.length)||0},
   {id:"srs",     ico:"🧠", name:"Ôn tập ghi nhớ"},
   {id:"sentsrs", ico:"📖", name:"Ôn câu ví dụ"},
   {id:"listen",  ico:"🎧", name:"Luyện nghe"},
@@ -1779,6 +1781,112 @@ function roadmapSetup(){
     $$(".clDel").forEach(b=>b.onclick=()=>{ progress.customLessons=progress.customLessons.filter(x=>x.id!==b.dataset.id); save(); drawCustomList(); });
   };
   drawCustomList();
+}
+
+/* ============================================================
+   THƯ VIỆN VIDEO (5 channel) + đánh dấu "Đã học"
+   ============================================================ */
+function videoStudied(id){ return !!progress.studiedVideos[id]; }
+function setStudied(id, on){ if(on){ progress.studiedVideos[id]={at:Date.now()}; logActivity("sent"); } else { delete progress.studiedVideos[id]; } save(); }
+let vlFilter={ch:"", q:"", onlyNew:false};
+RENDER.videolib = () => {
+  const V=window.APPVIDEOS||{channels:[],videos:[]};
+  const studiedN=V.videos.filter(v=>videoStudied(v.id)).length;
+  $("#view").innerHTML=`
+    <h2 class="section-h">📺 Thư viện video</h2>
+    <p class="sub">${V.videos.length} video từ ${V.channels.length} kênh học tiếng Anh. Bấm vào video để học; video đã học có dấu <b style="color:var(--ok)">✓ Đã học</b>. Đã học: <b id="vlCount">${studiedN}/${V.videos.length}</b></p>
+    <div class="toolbar">
+      <input class="txt" id="vlQ" style="flex:1;min-width:180px" placeholder="🔎 Tìm video (vd: meeting, sales, presentation, AI...)" value="${esc(vlFilter.q)}">
+      <label class="chip ${vlFilter.onlyNew?'active':''}" id="vlNew">Chỉ chưa học</label>
+    </div>
+    <div class="chips" style="margin-top:4px">
+      <span class="chip ${vlFilter.ch===''?'active':''}" data-ch="">Tất cả kênh</span>
+      ${V.channels.map(c=>`<span class="chip ${vlFilter.ch===c.key?'active':''}" data-ch="${esc(c.key)}">${esc(c.name)} (${V.videos.filter(v=>v.ch===c.key&&(!vlFilter.onlyNew||!videoStudied(v.id))).length})</span>`).join("")}
+    </div>
+    <div id="vlList" style="margin-top:12px"></div>`;
+  const draw=()=>{
+    const q=vlFilter.q.trim().toLowerCase();
+    let vids=V.videos.filter(v=>(!vlFilter.ch||v.ch===vlFilter.ch) && (!vlFilter.onlyNew||!videoStudied(v.id)) && (!q||v.title.toLowerCase().includes(q)));
+    if(!vids.length){ $("#vlList").innerHTML=`<p class="sub">Không có video phù hợp.</p>`; return; }
+    const byCh={}; vids.forEach(v=>{(byCh[v.ch]=byCh[v.ch]||[]).push(v);});
+    $("#vlList").innerHTML=V.channels.filter(c=>byCh[c.key]).map(c=>`
+      <div class="panel">
+        <h3 style="margin-bottom:2px">${esc(c.name)} <a class="sub" href="https://www.youtube.com/${esc(c.handle)}/videos" target="_blank" rel="noopener" style="font-weight:400">${esc(c.handle)} ↗</a></h3>
+        <div class="sub" style="margin-bottom:8px">${esc(c.note)} · ${byCh[c.key].length} video</div>
+        <div class="vl-grid">
+          ${byCh[c.key].map(v=>vlCardHTML(v)).join("")}
+        </div>
+      </div>`).join("");
+    $$(".vl-card").forEach(card=>{
+      card.querySelector(".vl-thumb").onclick=()=>openVideo(card.dataset.id);
+      card.querySelector(".vl-title").onclick=()=>openVideo(card.dataset.id);
+      const tg=card.querySelector(".vl-toggle"); if(tg) tg.onclick=(e)=>{ e.stopPropagation(); setStudied(card.dataset.id, !videoStudied(card.dataset.id)); draw(); $("#vlCount").textContent=`${V.videos.filter(x=>videoStudied(x.id)).length}/${V.videos.length}`; };
+    });
+  };
+  $("#vlQ").oninput=e=>{vlFilter.q=e.target.value; draw();};
+  $("#vlNew").onclick=e=>{vlFilter.onlyNew=!vlFilter.onlyNew; e.target.classList.toggle("active",vlFilter.onlyNew); RENDER.videolib();};
+  $$(".chip[data-ch]").forEach(c=>c.onclick=()=>{vlFilter.ch=c.dataset.ch; RENDER.videolib();});
+  draw();
+};
+function vlCardHTML(v){
+  const done=videoStudied(v.id);
+  return `<div class="vl-card ${done?'done':''}" data-id="${esc(v.id)}">
+    <div class="vl-thumb" style="background-image:url('https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg')">
+      ${done?'<span class="vl-badge">✓ Đã học</span>':'<span class="vl-play">▶</span>'}
+    </div>
+    <div class="vl-title">${esc(v.title)}</div>
+    <button class="btn sm vl-toggle" style="${done?'':'border-color:var(--ok)'}">${done?'↩ Bỏ đánh dấu':'✓ Đánh dấu đã học'}</button>
+  </div>`;
+}
+let currentVideoId=null;
+function openVideo(id){
+  const V=window.APPVIDEOS; const v=V.videos.find(x=>x.id===id); if(!v){ toast("Không tìm thấy video"); return; }
+  const ch=V.channels.find(c=>c.key===v.ch)||{name:""};
+  currentVideoId=id; LessonPlay.stop();
+  const done=videoStudied(id);
+  $("#view").innerHTML=`
+    <div class="toolbar" style="margin-bottom:6px">
+      <button class="btn sm" id="vBack">← Thư viện</button>
+      <h2 class="section-h" style="margin:0;font-size:18px">${esc(v.title)}</h2>
+    </div>
+    <p class="sub">📺 ${esc(ch.name)} · Xem video, rồi bấm “Đã học”. Muốn học sâu: dán transcript để tạo bài đồng bộ (highlight câu + từ mới).</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <iframe id="vFrame" src="https://www.youtube.com/embed/${esc(id)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe>
+    </div>
+    <div class="toolbar" style="justify-content:center">
+      <button class="btn ${done?'':'primary'}" id="vStudied">${done?'✓ Đã học (bấm để bỏ)':'✓ Đánh dấu đã học'}</button>
+      <a class="btn sm" href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener">▶ Mở trên YouTube</a>
+    </div>
+    <details class="panel" style="margin-top:12px">
+      <summary style="cursor:pointer;font-weight:700">📝 Tạo bài học đồng bộ từ video này (dán transcript / lời thoại)</summary>
+      <div style="margin-top:10px">
+        <p class="sub">Trên YouTube: bấm <b>“...more → Show transcript”</b>, copy lời thoại, dán vào đây → app tách câu, tự dịch nghĩa Việt &amp; trích từ mới → học đồng bộ (đọc tới đâu highlight tới đó).</p>
+        <textarea class="ta" id="vTrans" placeholder="Dán transcript tiếng Anh..."></textarea>
+        <div class="toolbar" style="margin-top:8px">
+          <label class="sub">🌐 Tự dịch nghĩa Việt <input type="checkbox" id="vTransVi" checked></label>
+          <button class="btn primary" id="vMakeLesson">Tạo &amp; học đồng bộ</button>
+          <span class="sub" id="vMsg"></span>
+        </div>
+      </div>
+    </details>`;
+  $("#vBack").onclick=()=>RENDER.videolib();
+  $("#vStudied").onclick=()=>{ setStudied(id, !videoStudied(id)); openVideo(id); };
+  $("#vMakeLesson").onclick=async ()=>{
+    const text=$("#vTrans").value.trim();
+    if(!text){ toast("Dán transcript trước"); return; }
+    const sents=splitSentences(text); if(!sents.length){ toast("Không tách được câu"); return; }
+    const lines=sents.map(en=>lessonLine(en,""));
+    if($("#vTransVi").checked){
+      const msg=$("#vMsg"); let done2=0;
+      for(let i=0;i<lines.length;i+=4){ await Promise.all(lines.slice(i,i+4).map(async ln=>{ const t=await translateWord(ln.en); if(t)ln.vi=t; done2++; msg.textContent=`Đang dịch ${done2}/${lines.length}...`; })); }
+      msg.textContent="✓ Xong";
+    }
+    const lesson={id:"custom:vid-"+id, title:v.title.slice(0,60), thumb:"🎬", yt:id, lines};
+    progress.customLessons=progress.customLessons.filter(l=>l.id!==lesson.id);
+    progress.customLessons.push(lesson); setStudied(id,true); save();
+    toast("✅ Đã tạo bài học đồng bộ");
+    openLesson(lesson.id);
+  };
 }
 
 /* ---------- Tài liệu tham khảo (từ kho kiến thức FB) ---------- */
@@ -2833,4 +2941,4 @@ initTheme();
 buildNav();
 scheduleReminder();
 go(location.hash.slice(1) && PAGES.some(p=>p.id===location.hash.slice(1)) ? location.hash.slice(1) : "home");
-window.closeModal=closeModal; window.speak=speak; window.toggleLearned=toggleLearned; window.toast=toast; window.RENDER=RENDER; window.openYouglish=openYouglish; window.openLesson=openLesson; window.speakZh=speakZh;
+window.closeModal=closeModal; window.speak=speak; window.toggleLearned=toggleLearned; window.toast=toast; window.RENDER=RENDER; window.openYouglish=openYouglish; window.openLesson=openLesson; window.speakZh=speakZh; window.openVideo=openVideo;

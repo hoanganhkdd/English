@@ -194,6 +194,18 @@ textarea.ta{width:100%;min-height:120px;padding:12px;border:1px solid var(--line
 .rm-title{font-size:12.5px;color:var(--ink);margin-top:3px;min-height:32px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rm-date{font-size:11px;color:var(--muted);margin-top:4px}
 
+/* Thư viện video */
+.vl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.vl-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);display:flex;flex-direction:column}
+.vl-card.done{border-color:var(--ok)}
+.vl-thumb{width:100%;aspect-ratio:16/9;background:#000 center/cover no-repeat;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center}
+.vl-thumb .vl-play{font-size:34px;color:#fff;opacity:.9;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.vl-badge{position:absolute;top:8px;left:8px;background:var(--ok);color:#fff;font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px}
+.vl-card.done .vl-thumb{opacity:.82}
+.vl-title{padding:9px 10px 6px;font-size:13.5px;font-weight:600;line-height:1.35;cursor:pointer;flex:1;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vl-toggle{margin:0 10px 10px;font-size:12px}
+
 /* Trình học bài đồng bộ */
 .ls-grid{display:grid;grid-template-columns:1fr 1fr 0.9fr;gap:12px;margin-top:12px}
 .ls-col h3{margin:0 0 8px}
