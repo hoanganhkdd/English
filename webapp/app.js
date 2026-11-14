@@ -821,6 +821,8 @@ function buildNav(){
 let current = "home";
 function go(id){
   if(typeof Seq!=="undefined" && Seq.playing) Seq.stop();
+  if(typeof LessonPlay!=="undefined" && LessonPlay.playing) LessonPlay.stop();
+  if(typeof VideoSync!=="undefined" && VideoSync.player) VideoSync.stop();
   if(id!=="exam" && examState && examState.timer){ clearInterval(examState.timer); examState=null; }
   current = id;
   $$(".nav-item").forEach(b=>b.classList.toggle("active", b.dataset.page===id));
@@ -1563,7 +1565,7 @@ function lessonVocab(en){
   items.sort((a,b)=>(isKnown(a.w)?1:0)-(isKnown(b.w)?1:0));
   return items.slice(0,8);
 }
-function lessonLine(en, vi){ return {en, vi:vi||"", words:lessonVocab(en)}; }
+function lessonLine(en, vi, t){ const o={en, vi:vi||"", words:lessonVocab(en)}; if(t!=null) o.t=t; return o; }
 // Danh sách bài học sẵn có (theo chủ đề) + bài tự tạo
 function topicLessonMeta(){
   const m={};
@@ -1873,61 +1875,174 @@ function vlCardHTML(v){
     <button class="btn sm vl-toggle" style="${done?'':'border-color:var(--ok)'}">${done?'↩ Bỏ đánh dấu':'✓ Đánh dấu đã học'}</button>
   </div>`;
 }
+/* ---------- Đồng bộ phụ đề theo video thật (YouTube IFrame API) ---------- */
+let ytApiReady=false, ytApiLoading=false;
+function loadYTApi(cb){
+  if(ytApiReady && window.YT && window.YT.Player){ cb(); return; }
+  if(ytApiLoading){ const iv=setInterval(()=>{ if(ytApiReady){ clearInterval(iv); cb(); } },120); return; }
+  ytApiLoading=true;
+  const prev=window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady=()=>{ ytApiReady=true; if(prev)try{prev();}catch(e){} cb(); };
+  const s=document.createElement("script"); s.src="https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+}
+const VideoSync={
+  player:null, L:null, idx:-1, timer:null, onLine:null,
+  start(elId, videoId, L, onLine){
+    this.stop(); this.L=L; this.idx=-1; this.onLine=onLine;
+    loadYTApi(()=>{ try{
+      this.player=new YT.Player(elId,{videoId, playerVars:{enablejsapi:1, rel:0, modestbranding:1},
+        events:{ onReady:()=>this._poll() }});
+    }catch(e){ console.warn(e); } });
+  },
+  _poll(){ clearInterval(this.timer); this.timer=setInterval(()=>{
+    if(!this.player||!this.player.getCurrentTime) return;
+    let t; try{ t=this.player.getCurrentTime(); }catch(e){ return; }
+    const i=this._lineAt(t);
+    if(i!==this.idx && i>=0){ this.idx=i; if(this.onLine)this.onLine(i); }
+  },300); },
+  _lineAt(t){ const L=this.L.lines; let i=-1; for(let k=0;k<L.length;k++){ if((L[k].t||0)<=t+0.15) i=k; else break; } return i; },
+  seek(i){ const ln=this.L.lines[i]; if(this.player&&this.player.seekTo&&ln){ this.player.seekTo(ln.t||0, true); try{this.player.playVideo();}catch(e){} } },
+  stop(){ clearInterval(this.timer); this.timer=null; if(this.player&&this.player.destroy){ try{this.player.destroy();}catch(e){} } this.player=null; this.L=null; this.idx=-1; }
+};
+// Parse transcript có mốc thời gian (từ YouTube "Show transcript")
+function parseTimedTranscript(text){
+  const lines=text.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  const toS=ts=>{ const p=ts.split(":").map(Number); return p.length===3? p[0]*3600+p[1]*60+p[2] : p[0]*60+p[1]; };
+  const tsRe=/^(\d{1,2}:\d{2}(?::\d{2})?)$/, inlineRe=/^(\d{1,2}:\d{2}(?::\d{2})?)\s+(.+)$/;
+  const cues=[]; let pend=null, any=false;
+  for(const ln of lines){ let m;
+    if((m=ln.match(tsRe))){ pend=toS(m[1]); any=true; }
+    else if((m=ln.match(inlineRe))){ cues.push({t:toS(m[1]), en:m[2].trim()}); pend=null; any=true; }
+    else if(pend!=null){ cues.push({t:pend, en:ln}); pend=null; }
+    else if(cues.length){ cues[cues.length-1].en+=" "+ln; }
+  }
+  return any && cues.length ? cues : null;
+}
+// Best-effort: tự lấy caption YouTube (chạy trong trình duyệt người dùng; có thể bị chặn)
+async function autoFetchTranscript(id){
+  const watch="https://www.youtube.com/watch?v="+id+"&hl=en";
+  const proxies=[ u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
+                  u=>"https://api.codetabs.com/v1/proxy/?quest="+encodeURIComponent(u) ];
+  for(const px of proxies){
+    try{
+      const html=await (await fetch(px(watch))).text();
+      const m=html.match(/"captionTracks":(\[.*?\])/s); if(!m) continue;
+      const tracks=JSON.parse(m[1].replace(/\\u0026/g,"&").replace(/\\"/g,'"'));
+      const tr=tracks.find(t=>/^en/i.test(t.languageCode))||tracks[0]; if(!tr||!tr.baseUrl) continue;
+      const url=tr.baseUrl.replace(/\\u0026/g,"&")+"&fmt=json3";
+      const j=JSON.parse(await (await fetch(px(url))).text());
+      const cues=(j.events||[]).filter(e=>e.segs).map(e=>({t:Math.round((e.tStartMs||0)/1000), en:(e.segs.map(s=>s.utf8).join("")).replace(/\s+/g," ").trim()})).filter(c=>c.en);
+      if(cues.length) return cues;
+    }catch(e){}
+  }
+  return null;
+}
+// Dựng bài học từ cues (có mốc thời gian) + dịch VI
+async function buildTimedLesson(id, title, cues, onProg){
+  const lines=cues.map(c=>lessonLine(c.en, "", c.t));
+  let done=0;
+  for(let i=0;i<lines.length;i+=6){
+    await Promise.all(lines.slice(i,i+6).map(async ln=>{ const t=await translateWord(ln.en); if(t)ln.vi=t; done++; if(onProg)onProg(done,lines.length); }));
+  }
+  const lesson={id:videoLessonId(id), title:(title||"Video").slice(0,60), thumb:"🎬", yt:id, lines};
+  progress.customLessons=progress.customLessons.filter(l=>l.id!==lesson.id);
+  progress.customLessons.push(lesson); save();
+  return lesson;
+}
+
 let currentVideoId=null;
 function videoLessonId(id){ return "custom:vid-"+id; }
+function isTimedLesson(L){ return !!(L && L.lines && L.lines[0] && L.lines[0].t!=null); }
 function openVideo(id){
   const V=window.APPVIDEOS; const v=V.videos.find(x=>x.id===id); if(!v){ toast("Không tìm thấy video"); return; }
   const ch=V.channels.find(c=>c.key===v.ch)||{name:""};
-  currentVideoId=id; LessonPlay.stop();
+  currentVideoId=id; LessonPlay.stop(); VideoSync.stop();
   const done=videoStudied(id);
-  const L=getLesson(videoLessonId(id));   // bài học đồng bộ (nếu đã dán transcript)
+  const L=getLesson(videoLessonId(id));
+  const timed=isTimedLesson(L);
   lessonSource="🎬 "+(v.title||"Video").slice(0,30);
+  // Khung video: dùng div cho YT API nếu đồng bộ theo video; iframe thường nếu không
+  const videoBox = timed
+    ? `<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:10px"><div id="ytPlayer" style="position:absolute;inset:0;width:100%;height:100%"></div></div>`
+    : `<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:10px"><iframe id="vFrame" src="https://www.youtube.com/embed/${esc(id)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe></div>`;
   $("#view").innerHTML=`
     <div class="toolbar" style="margin-bottom:6px">
       <button class="btn sm" id="vBack">← Thư viện</button>
       <h2 class="section-h" style="margin:0;font-size:18px">${esc(v.title)}</h2>
     </div>
-    <p class="sub">📺 ${esc(ch.name)} · Xem video, dán phụ đề để hiện <b>English · Tiếng Việt · Từ mới</b> ngay dưới đây — dịch &amp; lưu từ mới khi đang học.</p>
-    <div style="position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-bottom:10px">
-      <iframe id="vFrame" src="https://www.youtube.com/embed/${esc(id)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe>
-    </div>
+    <p class="sub">📺 ${esc(ch.name)} · ${timed?'<b>Phụ đề tự chạy theo video</b> — bấm play, câu/từ highlight đồng bộ; bấm 1 câu để tua video.':'Phụ đề English · Tiếng Việt · Từ mới hiện dưới video — dịch &amp; lưu từ khi học.'}</p>
+    ${videoBox}
     <div class="toolbar" style="justify-content:center;margin-bottom:8px">
       <button class="btn ${done?'':'primary'}" id="vStudied">${done?'✓ Đã học (bấm để bỏ)':'✓ Đánh dấu đã học'}</button>
       <a class="btn sm" href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener">▶ Mở trên YouTube</a>
-      ${L?`<button class="btn sm" id="vReTrans">✏️ Sửa phụ đề</button>`:""}
+      ${L?`<button class="btn sm" id="vReTrans">✏️ Dán lại phụ đề</button>`:""}
     </div>
-    ${L ? `<div id="vSubArea">${lessonBodyHTML(L)}</div>`
+    ${timed
+      ? `<div class="panel"><div class="sub" style="text-align:center">▶ Bấm play trên video — phụ đề chạy theo. Bấm 1 câu để tua. Câu <b id="lsPos">0/${L.lines.length}</b></div></div>
+         <div class="ls-grid">
+           <div class="panel ls-col"><h3>📜 English</h3><div id="lsEnList" class="ls-list"></div></div>
+           <div class="panel ls-col"><h3>🇻🇳 Tiếng Việt</h3><div id="lsViList" class="ls-list"></div></div>
+           <div class="panel ls-col"><h3>📚 Từ mới — 🌐 dịch &amp; ➕ lưu</h3><div id="lsVocab" class="ls-list"></div></div>
+         </div>`
+      : L
+        ? `<div id="vSubArea">${lessonBodyHTML(L)}</div>`
         : `<div class="panel" id="vBuild">
-        <h3>📝 Dán phụ đề để hiện English · Tiếng Việt · Từ mới</h3>
-        <p class="sub">Trên YouTube: bấm <b>“...more → Show transcript”</b> (hoặc nút phụ đề), copy lời thoại rồi dán vào đây. App tách câu, tự dịch tiếng Việt &amp; trích từ mới → phụ đề 3 cột hiện ngay dưới video.</p>
-        <textarea class="ta" id="vTrans" placeholder="Dán phụ đề / lời thoại tiếng Anh..."></textarea>
-        <div class="toolbar" style="margin-top:8px">
-          <label class="sub">🌐 Tự dịch nghĩa Việt <input type="checkbox" id="vTransVi" checked></label>
-          <button class="btn primary" id="vMakeLesson">Hiện phụ đề</button>
-          <span class="sub" id="vMsg"></span>
-        </div>
-      </div>`}`;
-  $("#vBack").onclick=()=>{ LessonPlay.stop(); RENDER.videolib(); };
+            <h3>📝 Phụ đề English · Tiếng Việt · Từ mới</h3>
+            <div id="vAuto" class="sub" style="margin-bottom:8px">⏳ Đang thử tự lấy phụ đề từ YouTube…</div>
+            <p class="sub">Nếu không tự lấy được: trên YouTube bấm <b>“...more → Show transcript”</b> (nên <b>bật mốc thời gian</b> để phụ đề chạy đồng bộ theo video), copy rồi dán vào đây.</p>
+            <textarea class="ta" id="vTrans" placeholder="Dán phụ đề (kèm mốc thời gian 0:12 càng tốt)..."></textarea>
+            <div class="toolbar" style="margin-top:8px">
+              <label class="sub">🌐 Tự dịch nghĩa Việt <input type="checkbox" id="vTransVi" checked></label>
+              <button class="btn primary" id="vMakeLesson">Hiện phụ đề</button>
+              <span class="sub" id="vMsg"></span>
+            </div>
+          </div>`}`;
+  $("#vBack").onclick=()=>{ LessonPlay.stop(); VideoSync.stop(); RENDER.videolib(); };
   $("#vStudied").onclick=()=>{ setStudied(id, !videoStudied(id)); openVideo(id); };
-  if(L){ wireLessonBody(L); }
-  if($("#vReTrans")) $("#vReTrans").onclick=()=>{
-    if(confirm("Xóa phụ đề hiện tại để dán lại?")){ progress.customLessons=progress.customLessons.filter(l=>l.id!==videoLessonId(id)); save(); openVideo(id); }
-  };
-  if($("#vMakeLesson")) $("#vMakeLesson").onclick=async ()=>{
-    const text=$("#vTrans").value.trim();
-    if(!text){ toast("Dán phụ đề trước"); return; }
-    const sents=splitSentences(text); if(!sents.length){ toast("Không tách được câu"); return; }
-    const lines=sents.map(en=>lessonLine(en,""));
-    if($("#vTransVi").checked){
-      const msg=$("#vMsg"); let done2=0; $("#vMakeLesson").disabled=true;
-      for(let i=0;i<lines.length;i+=4){ await Promise.all(lines.slice(i,i+4).map(async ln=>{ const t=await translateWord(ln.en); if(t)ln.vi=t; done2++; msg.textContent=`Đang dịch ${done2}/${lines.length}...`; })); }
-    }
+  if($("#vReTrans")) $("#vReTrans").onclick=()=>{ if(confirm("Xóa phụ đề hiện tại để dán lại?")){ VideoSync.stop(); progress.customLessons=progress.customLessons.filter(l=>l.id!==videoLessonId(id)); save(); openVideo(id); } };
+
+  if(timed){
+    // Đồng bộ theo video thật
+    LessonPlay.L=L;
+    $("#lsEnList").innerHTML=L.lines.map((ln,i)=>`<div class="ls-line" id="lnEn-${i}" data-i="${i}">${esc(ln.en)}<div class="ls-ab">🗣️ ${esc(amBoiForSentence(ln.en))}</div></div>`).join("");
+    $("#lsViList").innerHTML=L.lines.map((ln,i)=>`<div class="ls-line" id="lnVi-${i}" data-i="${i}">${esc(ln.vi||"—")}</div>`).join("");
+    $$("#lsEnList .ls-line, #lsViList .ls-line").forEach(el=>el.onclick=()=>VideoSync.seek(+el.dataset.i));
+    lessonHighlight(0);
+    VideoSync.start("ytPlayer", id, L, (i)=>lessonHighlight(i));
+    return;
+  }
+  if(L){ wireLessonBody(L); return; }
+
+  // Chưa có phụ đề: thử tự lấy, nếu fail thì dán tay
+  const buildFromText=async (text)=>{
+    const timedCues=parseTimedTranscript(text);
+    const transVi=$("#vTransVi")?$("#vTransVi").checked:true;
+    const msg=$("#vMsg"); if($("#vMakeLesson"))$("#vMakeLesson").disabled=true;
+    let lines;
+    if(timedCues){ lines=timedCues.map(c=>lessonLine(c.en,"",c.t)); }
+    else { lines=splitSentences(text).map(en=>lessonLine(en,"")); }
+    if(!lines.length){ toast("Không tách được câu"); if($("#vMakeLesson"))$("#vMakeLesson").disabled=false; return; }
+    if(transVi){ let d=0; for(let i=0;i<lines.length;i+=5){ await Promise.all(lines.slice(i,i+5).map(async ln=>{ const t=await translateWord(ln.en); if(t)ln.vi=t; d++; if(msg)msg.textContent=`Đang dịch ${d}/${lines.length}...`; })); } }
     const lesson={id:videoLessonId(id), title:v.title.slice(0,60), thumb:"🎬", yt:id, lines};
     progress.customLessons=progress.customLessons.filter(l=>l.id!==lesson.id);
     progress.customLessons.push(lesson); setStudied(id,true); save();
-    toast("✅ Phụ đề đã sẵn sàng — bấm ▶ Học đồng bộ");
-    openVideo(id);  // hiện phụ đề inline ngay dưới video
+    toast(timedCues?"✅ Phụ đề sẽ chạy theo video":"✅ Phụ đề đã sẵn sàng");
+    openVideo(id);
   };
+  if($("#vMakeLesson")) $("#vMakeLesson").onclick=()=>{ const t=$("#vTrans").value.trim(); if(!t){toast("Dán phụ đề trước");return;} buildFromText(t); };
+  // Tự lấy caption (best-effort)
+  (async()=>{
+    const au=$("#vAuto"); if(!au) return;
+    const cues=await autoFetchTranscript(id);
+    if(!$("#vAuto")) return; // đã rời trang
+    if(cues && cues.length){
+      au.innerHTML="✓ Lấy được phụ đề tự động — đang dịch tiếng Việt…";
+      await buildTimedLesson(id, v.title, cues, (d,t)=>{ if($("#vAuto"))$("#vAuto").textContent=`Đang dịch ${d}/${t}...`; });
+      setStudied(id,true); openVideo(id);
+    } else {
+      au.innerHTML="ℹ️ Không tự lấy được phụ đề (YouTube chặn). Hãy dán transcript bên dưới (có mốc thời gian để chạy đồng bộ).";
+    }
+  })();
 }
 
 /* ---------- Tài liệu tham khảo (từ kho kiến thức FB) ---------- */
